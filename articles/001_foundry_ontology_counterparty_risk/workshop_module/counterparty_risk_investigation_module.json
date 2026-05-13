@@ -1,0 +1,125 @@
+{
+  "_comment": "Illustrative Workshop module specification for the Foundry Article 001 worked example. NOT a literal Foundry Workshop config export — actual Workshop modules are JSON exports from the Foundry Workshop UI, with platform-internal structure. This file documents the layout and components the article describes.",
+  "module_id": "counterparty_risk_investigation",
+  "module_name": "Counterparty Risk Investigation",
+  "version": "v1.0",
+  "target_object_type": "Counterparty",
+  "layout": "split_pane",
+
+  "primary_pane": {
+    "component_type": "object_card",
+    "sections": [
+      {
+        "section_id": "header",
+        "fields": [
+          "legal_name",
+          "jurisdiction",
+          "risk_rating",
+          "last_kyc_refresh"
+        ],
+        "conditional_formatting": [
+          {
+            "when": "risk_rating == 'critical'",
+            "style": "background: #c00; color: white"
+          },
+          {
+            "when": "risk_rating == 'high'",
+            "style": "background: #f93; color: black"
+          }
+        ]
+      },
+      {
+        "section_id": "aip_risk_summary",
+        "component_type": "aip_function_output",
+        "function_id": "adverse_media_summary",
+        "grounding_required": true,
+        "citation_required_per_assertion": true,
+        "output_format": "structured_text",
+        "max_length_words": 200,
+        "validation": [
+          "every factual_assertion must have source_passage substring match",
+          "reject if insufficient_corpus AND output is non-empty"
+        ]
+      },
+      {
+        "section_id": "relationships",
+        "subsections": [
+          {
+            "link_type": "TransactedWith",
+            "display": "top_10_by_aggregated_volume_usd",
+            "drilldown_enabled": true
+          },
+          {
+            "link_type": "UltimateBeneficialOwner",
+            "display": "all_with_effective_date_filter",
+            "cumulative_calculation": "sum_of_simple_path_products_with_dedup"
+          },
+          {
+            "link_type": "SanctionsHit",
+            "display": "active_only_with_effective_to_null"
+          },
+          {
+            "link_type": "AdverseMediaMention",
+            "display": "trailing_90_days_with_risk_relevance_color"
+          }
+        ]
+      }
+    ]
+  },
+
+  "secondary_pane": {
+    "component_type": "contextual_navigator",
+    "behavior": "responsive_to_primary_pane_selection",
+    "components": [
+      {
+        "when_section": "relationships.TransactedWith",
+        "show": "transaction_volume_time_series_chart",
+        "x_axis": "month",
+        "y_axis": "aggregated_volume_usd"
+      },
+      {
+        "when_section": "relationships.UltimateBeneficialOwner",
+        "show": "ownership_graph_visualization",
+        "graph_type": "directed_acyclic",
+        "node_size": "by_cumulative_ownership_percentage"
+      },
+      {
+        "when_section": "relationships.SanctionsHit",
+        "show": "sanctions_list_full_text_with_match_highlight"
+      },
+      {
+        "when_section": "relationships.AdverseMediaMention",
+        "show": "news_article_full_text_with_aip_citation_highlights"
+      }
+    ]
+  },
+
+  "actions": [
+    {
+      "action_id": "ElevateRiskRating",
+      "label": "Elevate Risk Rating",
+      "visible_when": "risk_rating in ['low', 'medium']",
+      "action_type_reference": "action_templates/elevate_risk_rating.yaml"
+    },
+    {
+      "action_id": "InitiateEnhancedDueDiligence",
+      "label": "Initiate EDD",
+      "visible_when": "any(relationships.AdverseMediaMention.risk_relevance == 'high') OR risk_rating in ['high', 'critical']",
+      "action_type_reference": "action_templates/initiate_edd.yaml"
+    },
+    {
+      "action_id": "DismissSanctionsHit",
+      "label": "Dismiss Sanctions Hit (false match)",
+      "visible_when": "relationships.SanctionsHit.hit_type == 'fuzzy_match'",
+      "authorization_level": "compliance_officer_or_above",
+      "action_type_reference": "action_templates/dismiss_sanctions_hit.yaml"
+    }
+  ],
+
+  "performance_notes": {
+    "object_set_pagination": "primary pane loads 100 objects per page",
+    "lazy_loading": "secondary pane components load only when their parent section is selected",
+    "search_index_strategy": "Counterparty.legal_name, jurisdiction, risk_rating indexed for sub-second search across 1M+ counterparty corpus",
+    "time_series_aggregation": "TransactedWith aggregations cached monthly; live for current month only"
+  }
+}

@@ -1,0 +1,6 @@
+cb_counterparty_id,legal_name,country_code,risk_tier,last_modified_timestamp,registration_number
+CB-001,Acme Holdings (Z) LLC,ZZ,M,2026-05-10T22:14:00Z,REG-ZZ-99812
+CB-002,Northpoint Capital Partners,US,L,2026-05-09T18:02:00Z,REG-US-DE-44521
+CB-003,Sirius Trading SA,LU,H,2026-05-11T01:45:00Z,REG-LU-B-189447
+CB-004,Acme Holdings ZZ,ZZ,M,2026-05-08T11:33:00Z,REG-ZZ-99812
+CB-005,Meridian Global Advisors,SG,L,2026-05-10T07:18:00Z,REG-SG-201400001A

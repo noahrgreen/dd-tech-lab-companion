@@ -1,0 +1,4 @@
+amm_id,counterparty_id,news_article_id,mention_date,risk_relevance
+AMM-1,C-SYN-12345,NA-SYN-001,2026-04-22,high
+AMM-2,C-SYN-12345,NA-SYN-002,2026-04-30,medium
+AMM-3,C-SYN-12345,NA-SYN-003,2026-05-08,high

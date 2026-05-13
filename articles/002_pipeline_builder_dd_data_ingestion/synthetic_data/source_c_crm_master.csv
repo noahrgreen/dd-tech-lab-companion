@@ -1,0 +1,7 @@
+crm_id,company_name,country,registration_id,client_segment,onboarded_date
+CRM-12345,Acme Holdings (Z),Z,REG-ZZ-99812,corporate,2024-09-15
+CRM-12346,Northpoint Capital,United States,REG-US-DE-44521,corporate,2024-06-01
+CRM-12347,Sirius Trading,Luxembourg,REG-LU-B-189447,corporate,2023-11-08
+CRM-12348,Meridian Global Advisors,Singapore,REG-SG-201400001A,corporate,2024-02-20
+CRM-12349,Heliotrope Holdings,Netherlands,,corporate,2025-03-12
+CRM-12350,Yellowfin Maritime,Liberia,REG-LR-MAR-771,corporate,2024-10-08

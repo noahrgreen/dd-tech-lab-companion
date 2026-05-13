@@ -1,0 +1,2 @@
+counterparty_id,person_id,ownership_percentage,ownership_type,effective_from,effective_to,disclosure_source,disclosure_date
+C-SYN-12345,P-SYN-08832,0.408,indirect_calculated,2024-03-01,,fincen_boi,2024-03-15

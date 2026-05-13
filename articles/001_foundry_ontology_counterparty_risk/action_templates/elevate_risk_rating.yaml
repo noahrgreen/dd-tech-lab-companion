@@ -1,0 +1,87 @@
+# ActionType: ElevateRiskRating
+# Companion artifact for: DD Tech Lab — Foundry Article 001
+#
+# Illustrative ActionType specification. Actual Foundry Actions are defined
+# through the Actions UI in the Foundry platform; this YAML documents the SHAPE
+# of the ActionType the article describes.
+
+action_type_id: ElevateRiskRating
+target_object_type: Counterparty
+authorization_level: senior_analyst_or_above   # checked against user role at execution time
+description: |
+  Elevate a Counterparty's risk_rating with required justification text
+  and supporting-evidence ObjectSet. Creates an immutable AuditEntry as
+  a required side effect. Notifies the compliance committee when the new
+  rating is critical.
+
+required_inputs:
+  new_risk_rating:
+    type: enum
+    values: [medium, high, critical]
+    constraint: must_be_higher_than_current_counterparty_risk_rating
+
+  justification:
+    type: text
+    min_length_chars: 200
+    description: |
+      Free-text justification referencing the specific patterns the
+      analyst observed; will be permanently recorded on the AuditEntry.
+
+  supporting_evidence:
+    type: object_set
+    constraint: |
+      must contain at least one of:
+        - AdverseMediaMention
+        - SanctionsHit
+        - TransactionAnomaly (when defined; placeholder in worked example)
+    min_count: 1
+
+side_effects:
+  - operation: update
+    target: Counterparty.risk_rating
+    value: input.new_risk_rating
+
+  - operation: update
+    target: Counterparty.last_risk_change
+    value: current_timestamp
+
+  - operation: create
+    target: AuditEntry
+    fields:
+      action_type: ElevateRiskRating
+      actor: current_user_id
+      actor_role: current_user_role
+      timestamp: current_timestamp
+      target_id: target_counterparty.counterparty_id
+      prior_state:
+        risk_rating: target_counterparty.risk_rating_before_action
+      new_state:
+        risk_rating: input.new_risk_rating
+      justification: input.justification
+      supporting_evidence_ids: input.supporting_evidence.ids
+      superseded_by: null
+    immutable: true   # institution-enforced via permissioned write path + retention policy
+
+post_execution_hooks:
+  - condition: input.new_risk_rating == 'critical'
+    action: notify
+    target: compliance_committee_distribution_list
+    message: |
+      Counterparty {target.counterparty_id} ({target.legal_name}) elevated to
+      CRITICAL by {actor} at {timestamp}. Review supporting evidence and
+      regulatory filing requirements.
+
+  - condition: any(input.supporting_evidence.contains_type(SanctionsHit))
+    action: queue_for
+    target: regulatory_filing_review
+
+bypass_controls_note: |
+  This ActionType captures state changes that route through the Foundry
+  Actions framework. The institution must address ALL bypass channels
+  separately:
+    - direct dataset edits (block via permissioned write paths)
+    - admin overrides (require dual approval + separate audit log)
+    - emergency backfills (post-hoc reconciliation to Action-mediated record)
+    - transform redeployments (change-management log + impact assessment)
+  Audit-trail completeness is an institutional discipline, not a platform
+  guarantee. See Article 005 for the full Actions framework treatment.

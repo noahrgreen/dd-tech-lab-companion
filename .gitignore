@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Data
+*.parquet
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+
+# Working / staging — owner-only
+_scratch/
+_drafts/

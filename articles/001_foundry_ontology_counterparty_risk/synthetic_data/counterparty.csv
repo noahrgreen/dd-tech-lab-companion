@@ -1,0 +1,2 @@
+counterparty_id,legal_name,jurisdiction,risk_rating,last_kyc_refresh,pipeline_run_id,source_extract_date
+C-SYN-12345,ACME Holdings (Z),ZZ,medium,2026-02-14T00:00:00Z,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z

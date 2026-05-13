@@ -1,0 +1,154 @@
+# Pipeline Template — DD Ingestion Four-Layer Pattern
+# Companion artifact for: DD Tech Lab — Foundry Article 002
+# Status: Illustrative pipeline declaration (not literal Foundry Pipeline Builder export)
+#
+# Foundry pipelines are defined through the Pipeline Builder UI; this file
+# documents the SHAPE of a four-layer DD ingestion pipeline (bronze / silver /
+# gold / ontology-projection) with the conformance, idempotency, and
+# schema-drift policy declarations the article describes.
+
+pipeline:
+  id: dd_counterparty_ingestion_4layer
+  version: v1.0
+  description: |
+    Four-layer DD ingestion pipeline projecting three generic source systems
+    (Core Banking System A, KYC Platform B, CRM / Counterparty Master C) into
+    the Foundry counterparty-risk ontology.
+
+  # --------------------------------------------------------------------------
+  # BRONZE LAYER — raw source extracts
+  # --------------------------------------------------------------------------
+  bronze:
+    schema_drift_policy: fail_on_unmapped
+    retention_days: 90
+    partitioned_by: extract_date
+
+    datasets:
+
+      core_banking_a_counterparties:
+        connector:
+          type: jdbc
+          source_system: core_banking_system_a
+          incremental_pattern: watermark
+          watermark_column: last_modified_timestamp
+          parallelism: 8
+        schedule: "0 2 * * *"  # daily 02:00 UTC
+
+      kyc_platform_b_records:
+        connector:
+          type: rest
+          source_system: kyc_platform_b
+          rate_limit_rps: 5  # per vendor SLA
+          authentication: oauth_client_credentials
+          full_refresh: true
+        schedule: "0 3 * * 0"  # weekly Sunday 03:00 UTC
+
+      crm_master_c_counterparties:
+        connector:
+          type: file_drop
+          source_system: crm_master_c
+          location: sftp://drop.<institution>.internal/crm/counterparty_master/
+          file_pattern: "counterparty_master_*.csv"
+          arrival_monitoring: required
+        schedule: "0 4 * * *"  # daily 04:00 UTC
+
+  # --------------------------------------------------------------------------
+  # SILVER LAYER — cleaned, conformed, deduplicated
+  # --------------------------------------------------------------------------
+  silver:
+    schema_drift_policy: fail_on_unmapped
+
+    datasets:
+
+      silver_counterparties_resolved:
+        inputs:
+          - bronze.core_banking_a_counterparties
+          - bronze.kyc_platform_b_records
+          - bronze.crm_master_c_counterparties
+        transforms:
+          - standardize_jurisdiction_codes:
+              target_format: iso_3166_1_alpha_2
+              fallback_on_unmappable: flag_for_review
+          - canonicalize_legal_names:
+              steps: [lowercase, trim, unicode_normalize_nfc]
+          - conform_categorical_values:
+              risk_rating: enum[low, medium, high, critical]
+              pep_status: enum[none, domestic, foreign, international_org]
+          - apply_data_classification:
+              rules_path: governance/data_classification.yaml
+              default_tier: TIER_2
+          - resolve_entities:
+              rules_path: entity_resolution_rules.yaml
+
+  # --------------------------------------------------------------------------
+  # GOLD LAYER — ontology-ready, audit-metadata-bearing
+  # --------------------------------------------------------------------------
+  gold:
+    audit_metadata:
+      required_columns:
+        - pipeline_run_id
+        - source_extract_date
+        - transform_version
+        - computed_at
+
+    datasets:
+
+      gold_counterparty_ontology:
+        input: silver.silver_counterparties_resolved
+        joins:
+          - silver.silver_kyc_status
+          - silver.silver_sanctions_hits
+          - silver.silver_adverse_media_mentions
+        transform_module: transforms/silver_to_gold_transform.py
+        transform_version: v2.1
+        ontology_projection_target: Counterparty
+
+  # --------------------------------------------------------------------------
+  # ONTOLOGY PROJECTION — register gold-dataset rows as ontology object instances
+  # --------------------------------------------------------------------------
+  ontology_projection:
+    # Configured through the Ontology Manager UI in Foundry; this declaration
+    # documents the intent. The actual projection runs continuously off
+    # gold.gold_counterparty_ontology updates.
+    target_object_type: Counterparty
+    primary_key: counterparty_id
+    property_mappings:
+      counterparty_id: counterparty_id
+      legal_name: legal_name_canonical
+      jurisdiction: jurisdiction_iso2
+      risk_rating: risk_rating
+      last_kyc_refresh: last_kyc_refresh
+      pipeline_run_id: pipeline_run_id
+      source_extract_date: source_extract_date
+
+# --------------------------------------------------------------------------
+# OPERATIONAL DISCIPLINE NOTES
+# --------------------------------------------------------------------------
+operational_notes:
+  idempotency: |
+    Every transform MUST use the pipeline-run-context timestamp via
+    `ctx.run_timestamp` rather than `current_timestamp()` for any "now"-derived
+    computation. Incremental extractions MUST update the watermark column on
+    successful run and tolerate replay without producing duplicate gold-layer
+    records (achieved by upsert-on-primary-key into gold datasets).
+
+  schema_drift: |
+    Default policy `fail_on_unmapped` halts the pipeline on any unrecognized
+    source-system field. Operations team acknowledges the drift event, classifies
+    the new field (TIER_2 / TIER_3 / TIER_4 per data_classification.yaml),
+    updates the conformance transform, and re-runs the bronze layer. Per-field
+    `log_and_continue` overrides are permitted only for documented low-criticality
+    auxiliary fields.
+
+  audit_metadata: |
+    Audit-metadata columns on every gold-layer record support: (a) regulatory
+    documentation under SR 11-7, OCC 2011-12, SOX §404, and FFIEC; (b) debugging
+    via transform-version traceback; (c) back-fill management on transform-version
+    bug fixes; (d) downstream model-risk-management discipline.
+
+  bypass_controls: |
+    Pipeline Builder's no-code surface and Code Repository PySpark transforms are
+    the SANCTIONED paths for gold-layer materialization. Direct gold-dataset edits,
+    admin overrides, manual CSV imports, and emergency back-fills are BYPASS
+    channels that require separate audit treatment. See Foundry Article 005 for
+    the Actions framework discipline applied to ontology-layer state changes.

@@ -1,0 +1,159 @@
+# Counterparty-Risk Ontology Schema
+# Companion artifact for: DD Tech Lab — Foundry Article 001
+# Status: Illustrative schema (not literal Foundry config syntax)
+#
+# Foundry ontology objects are created through the Ontology Manager UI or the
+# Foundry SDK. This file documents the SHAPE of the ontology referenced in the
+# article; production implementation requires the corresponding Foundry-platform
+# workflow (object-type creation via Ontology Manager, property mappings via
+# Pipeline Builder, link-type registration, etc.).
+
+ObjectTypes:
+
+  Counterparty:
+    description: "Central object representing a counterparty under DD analysis"
+    Properties:
+      counterparty_id: primary_key
+      legal_name: string
+      jurisdiction: country_code
+      risk_rating: "enum[low, medium, high, critical]"
+      last_kyc_refresh: timestamp
+      last_risk_change: timestamp
+      pipeline_run_id: string
+      source_extract_date: timestamp
+    Subtypes:
+      CorporateCounterparty:
+        adds:
+          - entity_type
+          - incorporation_date
+          - parent_entity_id
+      IndividualCounterparty:
+        adds:
+          - date_of_birth
+          - nationality
+          - pep_status
+      FundCounterparty:
+        adds:
+          - investment_manager_id
+          - fund_structure_type
+
+  Person:
+    description: "Natural person who may be a UBO, officer, signatory, or individual counterparty"
+    Properties:
+      person_id: primary_key
+      legal_name_canonical: string
+      legal_name_variants: "array<string>"
+      date_of_birth: "date | null"
+      nationality: "array<country_code>"
+      pep_status: "enum[none, domestic, foreign, international_org] | null"
+
+  Transaction:
+    description: "A transaction between two counterparties"
+    Properties:
+      transaction_id: primary_key
+      source_counterparty_id: "foreign_key(Counterparty)"
+      dest_counterparty_id: "foreign_key(Counterparty)"
+      amount: decimal
+      currency: iso_currency
+      timestamp: timestamp
+      settlement_state: "enum[pending, settled, reversed]"
+    Subtypes:
+      FXTransaction:
+        adds: [base_pair, quote_pair, rate]
+      SecuritiesTransaction:
+        adds: [instrument_id, trade_type]
+      PaymentTransaction:
+        adds: [payment_method, beneficiary_bank]
+      LendingTransaction:
+        adds: [facility_id, drawdown_type]
+
+  SanctionsHit:
+    description: "A counterparty's match against a sanctions list"
+    Properties:
+      sanctions_hit_id: primary_key
+      counterparty_id: "foreign_key(Counterparty)"
+      sanctions_list_id: string
+      hit_type: "enum[exact_match, fuzzy_match, alias_match]"
+      effective_from: timestamp
+      effective_to: "timestamp | null"
+
+  AdverseMediaMention:
+    description: "A news article mentioning a counterparty in an adverse-media context"
+    Properties:
+      amm_id: primary_key
+      counterparty_id: "foreign_key(Counterparty)"
+      news_article_id: "foreign_key(NewsArticle)"
+      mention_date: date
+      risk_relevance: "enum[low, medium, high]"
+
+  AuditEntry:
+    description: "Institution-modeled audit log entry; institution must enforce write-only/supersession semantics"
+    Properties:
+      audit_entry_id: primary_key
+      action_type: string
+      actor: string
+      actor_role: string
+      timestamp: timestamp
+      target_id: string
+      prior_state: "json"
+      new_state: "json"
+      justification: string
+      supporting_evidence_ids: "array<string>"
+      superseded_by: "foreign_key(AuditEntry) | null"
+
+LinkTypes:
+
+  UltimateBeneficialOwner:
+    description: "Person ultimately controls Counterparty (direct or indirect)"
+    source: Counterparty
+    target: Person
+    Properties:
+      ownership_percentage: decimal
+      ownership_type: "enum[direct_voting, direct_economic, indirect_calculated]"
+      effective_from: date
+      effective_to: "date | null"
+      disclosure_source: "enum[fincen_boi, uk_psc, eu_ubo, opencorporates, voluntary]"
+      disclosure_date: date
+
+  TransactedWith:
+    description: "Counterparty has had transactions with another Counterparty"
+    source: Counterparty
+    target: Counterparty
+    Properties:
+      aggregated_volume_usd: decimal
+      aggregated_count: integer
+      last_transaction_date: timestamp
+      direction: "enum[bilateral, source_to_dest_only, dest_to_source_only]"
+
+  OfficerOf:
+    description: "Person holds an officer role at Counterparty"
+    source: Person
+    target: Counterparty
+    Properties:
+      role: "enum[director, officer, signatory, registered_agent]"
+      effective_from: date
+      effective_to: "date | null"
+      disclosure_source: string
+
+ActionTypes:
+
+  ElevateRiskRating:
+    description: "Elevate a Counterparty's risk rating with required justification + supporting evidence"
+    target_object: Counterparty
+    authorization_level: senior_analyst_or_above
+    required_inputs:
+      new_risk_rating:
+        type: "enum[medium, high, critical]"
+        constraint: "must be higher than current Counterparty.risk_rating"
+      justification:
+        type: text
+        min_length_chars: 200
+      supporting_evidence:
+        type: ObjectSet
+        constraint: "must contain at least one of {AdverseMediaMention, SanctionsHit, TransactionAnomaly}"
+    side_effects:
+      - "update Counterparty.risk_rating = new_risk_rating"
+      - "update Counterparty.last_risk_change = current_timestamp"
+      - "create AuditEntry with full lineage"
+    post_execution:
+      - "if new_risk_rating == 'critical': notify compliance_committee_distribution_list"

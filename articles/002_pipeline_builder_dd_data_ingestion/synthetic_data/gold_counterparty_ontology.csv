@@ -1,0 +1,7 @@
+counterparty_id,legal_name,jurisdiction,risk_rating,last_kyc_refresh,pipeline_run_id,source_extract_date,transform_version,computed_at
+SILV-1001,acme holdings (z) llc,ZZ,medium,2026-02-14T00:00:00Z,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z,silver_to_gold@v2.1,2026-05-11T03:18:42Z
+SILV-1002,northpoint capital partners lp,US,low,2026-01-22T00:00:00Z,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z,silver_to_gold@v2.1,2026-05-11T03:18:42Z
+SILV-1003,sirius trading sa,LU,high,2026-03-08T00:00:00Z,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z,silver_to_gold@v2.1,2026-05-11T03:18:42Z
+SILV-1004,meridian global advisors pte ltd,SG,low,2025-11-30T00:00:00Z,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z,silver_to_gold@v2.1,2026-05-11T03:18:42Z
+SILV-1005,heliotrope holdings bv,NL,medium,2026-04-02T00:00:00Z,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z,silver_to_gold@v2.1,2026-05-11T03:18:42Z
+SILV-1006,yellowfin maritime,LR,medium,,prod-2026-05-11T03:00:00Z-run-4821,2026-05-11T02:14:00Z,silver_to_gold@v2.1,2026-05-11T03:18:42Z

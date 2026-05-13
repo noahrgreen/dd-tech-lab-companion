@@ -1,0 +1,83 @@
+# Entity-Resolution Rule Set — DD Counterparty Ingestion
+# Companion artifact for: DD Tech Lab — Foundry Article 002
+# Status: Illustrative rule set for the worked-example three-source ingestion
+#
+# Real institutions tune these parameters against their own counterparty corpus
+# and validate against a labeled holdout set before deployment.
+
+entity_resolution:
+  description: |
+    Deterministic-first, probabilistic-fallback entity-resolution rule set
+    for resolving overlapping counterparty records across Core Banking System A,
+    KYC Platform B, and CRM / Counterparty Master C source systems.
+
+  # --------------------------------------------------------------------------
+  # Stage 1: deterministic matching on regulator-issued identifiers
+  # --------------------------------------------------------------------------
+  deterministic_match:
+    description: Exact match on regulator-issued identifiers ends resolution early
+    priority_order:
+      - lei                       # ISO 17442 Legal Entity Identifier
+      - ein                       # US Employer Identification Number
+      - registration_number       # jurisdiction-specific (Companies House, Delaware, etc.)
+      - duns                      # Dun & Bradstreet D-U-N-S
+    behavior_on_match: short_circuit_resolution  # accept the match, skip probabilistic stage
+
+  # --------------------------------------------------------------------------
+  # Stage 2: probabilistic matching when deterministic stage did not resolve
+  # --------------------------------------------------------------------------
+  probabilistic_match:
+    description: Composite-score matching when no regulator-identifier match found
+    composite_threshold: 0.85   # records above threshold merge; below stay distinct
+    scoring_weights:
+      legal_name_jaro_winkler: 0.50
+      jurisdiction_exact:      0.20
+      incorporation_date_proximity_days_log: 0.15
+      address_jaro_winkler:    0.10
+      counterparty_type_exact: 0.05
+
+    # Jaro-Winkler is computed on canonicalized legal names (lowercased, trimmed,
+    # Unicode-normalized to NFC). Score 1.0 = exact match, 0.0 = no similarity.
+
+    # Incorporation-date proximity uses log of |day-difference|; same-day = 1.0,
+    # 1-week-apart ≈ 0.7, 1-year-apart ≈ 0.3.
+
+  # --------------------------------------------------------------------------
+  # Stage 3: review flagging when composite score is borderline
+  # --------------------------------------------------------------------------
+  review_flag_band:
+    composite_score_range: [0.70, 0.85]
+    behavior: write_to_silver_with_review_flag
+    description: |
+      Records with composite scores between 0.70 and 0.85 are written to silver
+      with a `requires_review` flag, not auto-merged. The institution's data-quality
+      team reviews these weekly and either confirms merge (writes the canonical
+      counterparty_id) or marks the records as distinct (clears the flag).
+
+  # --------------------------------------------------------------------------
+  # Stage 4: tie-breaking when multiple records score above threshold
+  # --------------------------------------------------------------------------
+  tie_breaking:
+    behavior: prefer_oldest_source_extract_date
+    description: |
+      When a new counterparty record matches multiple existing silver records
+      above the 0.85 threshold, prefer the match to the record with the oldest
+      source_extract_date. Rationale: established counterparty records have
+      typically been reviewed; preserving the link to the longest-known instance
+      maintains continuity in the Workshop application's history view.
+
+# Audit notes
+audit:
+  rule_set_version: v1.0
+  effective_from: 2025-01-01
+  last_review_date: 2026-04-15
+  reviewer: data_quality_team
+  validation_holdout_set: governance/entity_resolution_validation_set.csv
+  precision: 0.94   # measured against holdout
+  recall: 0.91      # measured against holdout
+
+# Changes to this rule set require:
+#   1. Holdout-set re-validation
+#   2. Back-fill plan against historical silver data
+#   3. Data-quality-team sign-off
+#   4. Audit-log entry referencing the prior rule_set_version

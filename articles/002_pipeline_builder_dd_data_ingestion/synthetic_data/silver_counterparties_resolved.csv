@@ -1,0 +1,7 @@
+silver_counterparty_id,legal_name_canonical,jurisdiction_iso2,risk_rating,last_kyc_refresh,lei,registration_number,sources,resolution_method,composite_match_score
+SILV-1001,acme holdings (z) llc,ZZ,medium,2026-02-14T00:00:00Z,5493000ABCDEFGH00000,REG-ZZ-99812,"[CB-001,CB-004,KYC-A001,CRM-12345]",deterministic_match_lei_and_registration,1.00
+SILV-1002,northpoint capital partners lp,US,low,2026-01-22T00:00:00Z,529900XYZQRSTUV00000,REG-US-DE-44521,"[CB-002,KYC-A002,CRM-12346]",deterministic_match_lei,1.00
+SILV-1003,sirius trading sa,LU,high,2026-03-08T00:00:00Z,529900AAAABBBBCC0000,REG-LU-B-189447,"[CB-003,KYC-A003,CRM-12347]",deterministic_match_registration,1.00
+SILV-1004,meridian global advisors pte ltd,SG,low,2025-11-30T00:00:00Z,529900DDDEEEFFF00000,REG-SG-201400001A,"[CB-005,KYC-A004,CRM-12348]",deterministic_match_lei_and_registration,1.00
+SILV-1005,heliotrope holdings bv,NL,medium,2026-04-02T00:00:00Z,529900GGGHHHIII00000,,"[KYC-A005,CRM-12349]",probabilistic_match_legal_name_jurisdiction,0.92
+SILV-1006,yellowfin maritime,LR,medium,,,REG-LR-MAR-771,[CRM-12350],single_source_only,
