@@ -1,0 +1,53 @@
+{
+  "summary_text": "Three open adverse-media signals concentrated in the 90-day lookback. (1) A civil complaint filed 2026-04-29 in Singapore High Court names Meridian Holdings among three specialty-chemical trading defendants in a labeling-discrepancy matter; pleadings are due 2026-05-29 and no substantive response has been filed. (2) The Singapore specialty-chemical regulator's Q1 inspection summary names Meridian Holdings with four documentation holds — the highest individual count on the named-firms list — though the regulator framed the pattern as a compliance-dialogue focus rather than an enforcement trigger. (3) Three Meridian shipments were held by port authorities in April pending documentation review, all subsequently cleared. Q1 revenue rose 8% year-over-year, but the company's Q1 announcement did not address either the port-documentation matter or the civil complaint.",
+  "factual_assertions": [
+    {
+      "assertion": "Three Meridian Holdings shipments were held by Singapore port authorities for documentation review in April 2026.",
+      "source_article_id": "AM-001",
+      "source_passage": "Singapore port authorities have temporarily held three Meridian Holdings (Pte) Ltd shipments pending documentation review"
+    },
+    {
+      "assertion": "The held shipments subsequently cleared inspection per port records dated 2026-04-15.",
+      "source_article_id": "AM-001",
+      "source_passage": "The shipments have since cleared inspection per port records dated 2026-04-15."
+    },
+    {
+      "assertion": "A civil complaint was filed in Singapore High Court on 2026-04-29 naming Meridian Holdings as a defendant in a labeling-discrepancy matter.",
+      "source_article_id": "AM-003",
+      "source_passage": "A civil complaint filed in Singapore High Court on 2026-04-29 names three specialty-chemical trading firms — including Meridian Holdings (Pte) Ltd — as defendants in a labeling-discrepancy matter"
+    },
+    {
+      "assertion": "Pleadings are due 2026-05-29 and Meridian Holdings has not commented publicly.",
+      "source_article_id": "AM-003",
+      "source_passage": "pleadings are due 2026-05-29. Meridian Holdings has not commented publicly on the matter."
+    },
+    {
+      "assertion": "Meridian Holdings was named in the Singapore specialty-chemical regulator's Q1 inspection summary with four documentation holds, the highest individual count on the named-firms list.",
+      "source_article_id": "AM-004",
+      "source_passage": "Meridian Holdings (Pte) Ltd appears on the list with four holds, the highest individual count on the named-firms list"
+    },
+    {
+      "assertion": "The regulator characterized the named-firm pattern as a compliance-dialogue focus rather than an enforcement-action trigger.",
+      "source_article_id": "AM-004",
+      "source_passage": "a focus area for compliance dialogue, not an enforcement-action trigger"
+    },
+    {
+      "assertion": "Meridian Holdings reported Q1 2026 specialty-chemical trading revenue of S$42.3 million, up 8% year-over-year.",
+      "source_article_id": "AM-002",
+      "source_passage": "Meridian Holdings (Pte) Ltd reported Q1 2026 specialty-chemical trading revenue of S$42.3 million, up 8% year-over-year"
+    },
+    {
+      "assertion": "The Q1 revenue announcement did not address the port-documentation-review matter.",
+      "source_article_id": "AM-002",
+      "source_passage": "The announcement did not address the port-documentation-review matter reported by Maritime Trade Daily on 2026-04-12."
+    }
+  ],
+  "rating_pressure_direction": "upward",
+  "rating_pressure_strength": "medium",
+  "insufficient_corpus": false,
+  "items_flagged_for_human_review": [
+    "Civil complaint is at pleadings stage; analyst judgment required on whether to escalate risk rating before substantive response from defendant.",
+    "Four documentation holds in Q1 is high in absolute terms but the regulator explicitly framed the pattern as non-enforcement. Analyst to weigh how the company's response posture (no public comment) interacts with the regulator's stated framing.",
+    "Q1 revenue announcement omitted both adverse signals. Analyst judgment on whether the omission is itself a disclosure-discipline signal."
+  ]
+}

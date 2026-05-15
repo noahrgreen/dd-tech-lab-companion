@@ -1,8 +1,22 @@
 {
   "article_no": "004",
-  "title": "AIP-Driven Adverse-Media Summarization for DD Engagements \u2014 Prompt Patterns, Grounding Strategy, Hallucination Controls",
+  "title": "AIP-Driven Adverse-Media Summarization for DD Engagements — Prompt Patterns, Grounding Strategy, Hallucination Controls",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/004_aip-adverse-media-summarization_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "Prompt YAML mirrors the seed's AIP function definition (target_ontology_object, inputs, system_prompt, user_prompt_template, output_validation chain).",
+    "Output schema is a valid JSON Schema draft 2020-12 with all 6 fields from the seed.",
+    "Citation-check tool runs end-to-end on synthetic corpus + sample output: 8/8 assertions pass.",
+    "Hallucination-verifier prompt template formalizes the seed's two-stage faithfulness check (substring + verifier-LLM).",
+    "5 hallucination_gate rules cover schema, citation, verifier, thin-corpus, and no-automated-rating-action."
+  ],
+  "known_limits": [
+    "Portable companion bundle; no live Foundry AIP deployment.",
+    "Verifier-LLM precision/recall numbers are illustrative ranges (not measured); calibrate before promoting blocking: false -> true.",
+    "Synthetic counterparty (Meridian Holdings Pte Ltd) and corpus are fully-fabricated demonstration content; do not use as production tuning data.",
+    "Downstream Actions wiring for human review-and-acceptance is Article 005's scope, not implemented here."
+  ],
+  "regulatory_framing": "SR 11-7 / OCC 2011-12 apply. rating_pressure_* fields are ADVISORY ONLY; no_automated_rating_action gate enforces this in evaluations/hallucination_gate.yaml.",
+  "prepared_by": "Noah Green CPA CFE"
 }

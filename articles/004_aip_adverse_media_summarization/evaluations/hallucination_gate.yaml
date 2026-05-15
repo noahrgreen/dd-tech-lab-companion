@@ -1,4 +1,49 @@
 gates:
-  - all factual assertions cite a source
-  - no unsupported jurisdiction claims
-  - no risk escalation without evidence
+  - id: schema_validate
+    type: jsonschema
+    schema_ref: schemas/grounded_summary_schema.json
+    blocking: true
+    description: |
+      Output must validate against grounded_summary_schema.json. Validation
+      failure halts the AIP Function and surfaces the JSONSchema error to the
+      analyst. No partial-output rendering — schema validity is binary.
+
+  - id: citation_substring
+    type: tool
+    tool_ref: tools/citation_check.py
+    blocking: true
+    description: |
+      For each factual_assertion: source_passage must be a substring of the
+      article identified by source_article_id (after whitespace normalization
+      and case-insensitive match). Any failed assertion drops the entire
+      output to insufficient_corpus = true and routes to human review.
+
+  - id: hallucination_verifier_llm
+    type: tool
+    tool_ref: tools/verifier_prompt_template.md
+    blocking: false
+    description: |
+      Second-pass LLM call evaluates whether each factual_assertion is
+      faithfully supported by source_passage (not just substring-matched).
+      Non-blocking by default — failures populate items_flagged_for_human_review
+      rather than rejecting the output. Set blocking: true once verifier
+      precision/recall has been measured against a labeled holdout set.
+
+  - id: insufficient_corpus_required_when_thin
+    type: deterministic
+    rule: |
+      If news_corpus contains < 3 distinct articles OR all articles cover the
+      same single event (deduplicated by event_id where available), the output
+      MUST set insufficient_corpus = true. Producing a non-empty summary on
+      thin corpus is a HIGH-severity policy violation.
+    blocking: true
+
+  - id: no_automated_rating_action
+    type: deterministic
+    rule: |
+      rating_pressure_direction and rating_pressure_strength are ADVISORY ONLY.
+      Downstream Actions framework (Article 005) must not trigger automated
+      rating changes based on these fields — every rating action requires a
+      human review-and-acceptance event.
+    blocking: true
+    rationale: SR 11-7 / OCC 2011-12 model-risk-management compliance

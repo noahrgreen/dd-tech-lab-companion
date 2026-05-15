@@ -1,0 +1,9 @@
+{
+  "counterparty_id": "CP-SYNTH-00042",
+  "legal_name": "Meridian Holdings (Pte) Ltd",
+  "jurisdiction": "Singapore",
+  "industry": "Specialty chemicals trading",
+  "prior_risk_rating": "B+",
+  "rating_review_lookback_days": 90,
+  "note": "FULLY SYNTHETIC entity for demonstration purposes only. Any resemblance to real organizations is coincidental."
+}

@@ -1,12 +1,72 @@
 {
-  "summary": "string",
-  "citations": [
-    {
-      "source_id": "string",
-      "claim": "string"
-    }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/noahrgreen/dd-tech-lab-companion/articles/004/grounded_summary_schema.json",
+  "title": "AIP Adverse Media Grounded Summary",
+  "description": "Structured-output schema enforced on every AIP adverse_media_summary response. Validation failure = output rejected; the AIP Function retries with the schema-violation error message included in the next user turn.",
+  "type": "object",
+  "required": [
+    "summary_text",
+    "factual_assertions",
+    "rating_pressure_direction",
+    "rating_pressure_strength",
+    "insufficient_corpus",
+    "items_flagged_for_human_review"
   ],
-  "risk_flags": [
-    "string"
-  ]
+  "additionalProperties": false,
+  "properties": {
+    "summary_text": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1800,
+      "description": "200-word synthesis (max ~1800 characters). Empty allowed only if insufficient_corpus = true."
+    },
+    "factual_assertions": {
+      "type": "array",
+      "description": "Every factual claim in summary_text must appear here with an explicit source. Substring-matched against the cited article by citation_check.py.",
+      "items": {
+        "type": "object",
+        "required": ["assertion", "source_article_id", "source_passage"],
+        "additionalProperties": false,
+        "properties": {
+          "assertion": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The factual claim, restated from the source. May paraphrase."
+          },
+          "source_article_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Identifier of the source article (must exist in the news_corpus input)."
+          },
+          "source_passage": {
+            "type": "string",
+            "minLength": 1,
+            "description": "VERBATIM substring of the source article that supports the assertion. Citation-check enforces this is a true substring (post-whitespace-normalization)."
+          }
+        }
+      }
+    },
+    "rating_pressure_direction": {
+      "type": "string",
+      "enum": ["upward", "downward", "none"],
+      "description": "Advisory signal for review-queue prioritization. Does not drive automated rating changes."
+    },
+    "rating_pressure_strength": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Advisory strength. Combined with direction, drives review-queue ordering only."
+    },
+    "insufficient_corpus": {
+      "type": "boolean",
+      "description": "True when the corpus is too thin to produce a meaningful summary. Setting this true is the CORRECT output for thin-corpus counterparties; producing plausible-but-empty text instead is the failure mode this field exists to prevent."
+    },
+    "items_flagged_for_human_review": {
+      "type": "array",
+      "description": "Ambiguous claims requiring analyst judgment. Workshop review-queue consumes this array directly.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
 }

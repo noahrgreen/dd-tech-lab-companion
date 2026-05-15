@@ -1,0 +1,34 @@
+{
+  "counterparty_id": "CP-SYNTH-00042",
+  "lookback_days": 90,
+  "articles": [
+    {
+      "article_id": "AM-001",
+      "date": "2026-04-12",
+      "source": "(SYNTHETIC) Maritime Trade Daily",
+      "headline": "Meridian Holdings flagged in port inspection backlog",
+      "body": "Singapore port authorities have temporarily held three Meridian Holdings (Pte) Ltd shipments pending documentation review, port records published this week show. A port spokesperson declined to characterize the holds as enforcement actions, noting that documentation reviews are routine for specialty-chemical cargo. Meridian Holdings did not respond to a request for comment by publication time. The shipments have since cleared inspection per port records dated 2026-04-15."
+    },
+    {
+      "article_id": "AM-002",
+      "date": "2026-04-18",
+      "source": "(SYNTHETIC) Regional Business Wire",
+      "headline": "Meridian Holdings announces Q1 specialty-chemical revenue up 8%",
+      "body": "Meridian Holdings (Pte) Ltd reported Q1 2026 specialty-chemical trading revenue of S$42.3 million, up 8% year-over-year, in an announcement released today. The company attributed the increase to renewed demand in Vietnamese and Indonesian downstream manufacturing. Margins were not disclosed. The announcement did not address the port-documentation-review matter reported by Maritime Trade Daily on 2026-04-12."
+    },
+    {
+      "article_id": "AM-003",
+      "date": "2026-05-02",
+      "source": "(SYNTHETIC) Asian Compliance Review",
+      "headline": "Civil suit filed against three specialty-chemical traders over alleged labeling discrepancies",
+      "body": "A civil complaint filed in Singapore High Court on 2026-04-29 names three specialty-chemical trading firms — including Meridian Holdings (Pte) Ltd — as defendants in a labeling-discrepancy matter brought by a Singapore-headquartered industrial buyer. The complaint alleges that product specifications on shipping documentation did not match laboratory analysis of delivered material across multiple shipments from 2025-Q4 to 2026-Q1. None of the defendants has filed a substantive response; pleadings are due 2026-05-29. Meridian Holdings has not commented publicly on the matter."
+    },
+    {
+      "article_id": "AM-004",
+      "date": "2026-05-09",
+      "source": "(SYNTHETIC) Maritime Trade Daily",
+      "headline": "Specialty chemicals regulator publishes 2026-Q1 inspection summary",
+      "body": "The Singapore specialty-chemical regulator published its 2026-Q1 inspection summary today, noting that approximately 4% of specialty-chemical shipments through Singapore ports were held for documentation review during the quarter, consistent with the prior three-quarter average. The report names eleven trading firms with three or more holds during the quarter; Meridian Holdings (Pte) Ltd appears on the list with four holds, the highest individual count on the named-firms list. The regulator characterized the named-firm pattern as 'a focus area for compliance dialogue, not an enforcement-action trigger.'"
+    }
+  ]
+}
