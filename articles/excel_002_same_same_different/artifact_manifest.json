@@ -1,9 +1,25 @@
 {
   "article_no": "002",
-  "title": "Same-Same-Different in Excel",
-  "series": "Excel Fraud Analytics",
-  "status": "starter_bundle",
+  "title": "Same-Same-Different in Excel — Detecting Identical-Value-Different-Date Patterns Across Vendor Files",
+  "series": "Claude in Excel for Fraud Detection",
+  "status": "validated_bundle",
+  "validation_status_detail": "validated_at_tab_structure_scope",
+  "source_article": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v4/002_same-same-different-in-excel_DRAFT_v4_2026-05-13.md",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/seeds/002_same-same-different-in-excel_seed_DRAFT_v1_2026-05-13.md",
-  "workbook_path": "workbooks/002-same-same-different.xlsx",
-  "quality_standard": "Workbook starter scaffold only; formulas, examples, and assertions must be finalized against the canonical article before public linking."
+  "workbook_path": "../../workbooks/002-same-same-different.xlsx",
+  "audit_artifact": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/coordination/excel_content_match_audit_2026-05-15.json",
+  "validation_scope": [
+    "Workbook tab structure matches article-described workpaper organization (README, Inputs, Pairing Logic, Exception Review, Checks).",
+    "Article exists in v4 draft state with ensemble scoring artifacts.",
+    "Audit script (coordination/excel_content_match_audit_2026-05-15.py) verifies tab presence; result captured in audit JSON."
+  ],
+  "known_limits": [
+    "Tab content is scaffold-level: each tab has 2-4 placeholder rows, NOT the full formulas/sample data/named ranges the article describes.",
+    "Cell-level content fidelity (COUNTIFS pairing logic, vendor-normalization formulas, exception-review FILTER expressions, Checks-tab cross-validation) is the NEXT promotion stage and not in this bundle.",
+    "Readers expecting a working downloadable workbook with the article's complete worked example will find the tab structure but not the populated content.",
+    "Synthetic-data generation (the article references reproducible synthetic data) is referenced but not yet built into the workbook."
+  ],
+  "next_promotion_stage": "Build out each tab's content to match article-described formulas, sample data, and named ranges. Approximately 4-6 hours per workbook for full content fidelity.",
+  "framing_discipline": "Validated at TAB-STRUCTURE scope only. Bundle scope intentionally bounded; deeper validation pending workbook content build.",
+  "prepared_by": "Noah Green CPA CFE"
 }

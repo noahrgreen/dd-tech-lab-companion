@@ -20,12 +20,12 @@
 | **Stochastic 009** | Higher-Order and Variable-Order Markov Models for Long-Memory Fraud Schemes | [script](stochastic_markov/companion_artifacts/009_higher_order_variable_order_markov.py) |
 | **Stochastic 010** | Continuous-Time Markov Chains for Transaction Timing | [bundle](articles/stochastic_010_continuous_time_markov/) · [script](stochastic_markov/companion_artifacts/010_continuous_time_markov.py) |
 | **Excel 001** | Benford's Law in Excel | [bundle](articles/excel_001_benford_first_digit/) · [workbook](workbooks/001-benford-excel-template.xlsx) |
-| **Excel 002** | Same-Same-Different in Excel | [starter bundle](articles/excel_002_same_same_different/) · [workbook](workbooks/002-same-same-different.xlsx) |
-| **Excel 003** | Linear Regression Outlier Detection in Excel | [starter bundle](articles/excel_003_linear_regression_outlier_detection/) · [workbook](workbooks/003-linear-regression-outlier-detection.xlsx) |
-| **Excel 004** | Geospatial Address Mapping in Excel | [starter bundle](articles/excel_004_geospatial_address_mapping/) · [workbook](workbooks/004-geospatial-address-mapping.xlsx) |
+| **Excel 002** | Same-Same-Different in Excel | [validated bundle (tab-scope)](articles/excel_002_same_same_different/) · [workbook](workbooks/002-same-same-different.xlsx) |
+| **Excel 003** | Linear Regression Outlier Detection in Excel | [validated bundle (tab-scope)](articles/excel_003_linear_regression_outlier_detection/) · [workbook](workbooks/003-linear-regression-outlier-detection.xlsx) |
+| **Excel 004** | Geospatial Address Mapping in Excel | [validated bundle (tab-scope)](articles/excel_004_geospatial_address_mapping/) · [workbook](workbooks/004-geospatial-address-mapping.xlsx) |
 | **Excel 005** | OSINT for Financial Fraud in Excel | [bundle](articles/excel_005_osint_vendor_validation/) · [workbook](osint-vendor-validation.xlsx) · [cache template](engagement_files/osint_cache/%7BRequest_ID%7D.json) |
 | **Excel 006** | Time-Series Anomaly Detection in Excel | [bundle](articles/excel_006_time_series_anomaly_detection/) · [workbook](DD-Tech-006-TimeSeries.xlsx) |
-| **Excel 007** | Round-Number Bias and Threshold Avoidance in Excel | [starter bundle](articles/excel_007_round_number_bias_threshold_avoidance/) · [workbook](workbooks/007-round-number-bias-threshold-avoidance.xlsx) |
+| **Excel 007** | Round-Number Bias and Threshold Avoidance in Excel | [validated bundle (tab-scope)](articles/excel_007_round_number_bias_threshold_avoidance/) · [workbook](workbooks/007-round-number-bias-threshold-avoidance.xlsx) |
 | **Excel 008** | Date-Pattern Analysis | [bundle](articles/excel_008_date_pattern_analysis/) · [workbook](008_date_pattern_analysis.xlsx) |
 | **Excel 009** | Frequency-of-Amount Analysis | [bundle](articles/excel_009_frequency_of_amount/) · [workbook](DD-Tech-Lab-Repo/009-frequency-of-amount.xlsx) |
-| **Excel 010** | Correlation Diagnostics for Journal-Entry Pairs in Excel | [starter bundle](articles/excel_010_correlation_diagnostics_journal_entry_pairs/) · [workbook](workbooks/010-correlation-diagnostics-journal-entry-pairs.xlsx) |
+| **Excel 010** | Correlation Diagnostics for Journal-Entry Pairs in Excel | [validated bundle (tab-scope)](articles/excel_010_correlation_diagnostics_journal_entry_pairs/) · [workbook](workbooks/010-correlation-diagnostics-journal-entry-pairs.xlsx) |

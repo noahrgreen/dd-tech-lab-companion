@@ -1,9 +1,24 @@
 {
   "article_no": "004",
-  "title": "Geospatial Address Mapping in Excel",
-  "series": "Excel Fraud Analytics",
-  "status": "starter_bundle",
+  "title": "Geospatial Address Mapping in Excel — Detecting Same-Address Vendor Clusters and Suspicious Proximity Patterns",
+  "series": "Claude in Excel for Fraud Detection",
+  "status": "validated_bundle",
+  "validation_status_detail": "validated_at_tab_structure_scope",
+  "source_article": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v4/004_geospatial-address-mapping_DRAFT_v4_2026-05-13.md",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/seeds/004_geospatial-address-mapping-in-excel_seed_DRAFT_v1_2026-05-13.md",
-  "workbook_path": "workbooks/004-geospatial-address-mapping.xlsx",
-  "quality_standard": "Workbook starter scaffold only; formulas, examples, and assertions must be finalized against the canonical article before public linking."
+  "workbook_path": "../../workbooks/004-geospatial-address-mapping.xlsx",
+  "audit_artifact": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/coordination/excel_content_match_audit_2026-05-15.json",
+  "validation_scope": [
+    "Workbook tab structure matches article-described workpaper organization (README, Inputs, Coordinate Prep, Distance Review, Checks).",
+    "Article exists in v4 draft state with ensemble scoring artifacts.",
+    "Audit script verifies tab presence; result captured in audit JSON."
+  ],
+  "known_limits": [
+    "Tab content is scaffold-level: each tab has 2-4 placeholder rows, NOT the full coordinate-extraction formulas / haversine-distance computation / cluster-flagging logic the article describes.",
+    "Cell-level content fidelity (address-string parsing, geocoding result columns, haversine distance formula, distance-band threshold flags, address-cluster review pivot) is the NEXT promotion stage.",
+    "Readers expecting a working downloadable workbook with full geospatial logic will find tab structure but not populated content."
+  ],
+  "next_promotion_stage": "Build out each tab's content to match article-described formulas, sample data (vendor address dataset), and named ranges. Approximately 4-6 hours per workbook for full content fidelity.",
+  "framing_discipline": "Validated at TAB-STRUCTURE scope only. Bundle scope intentionally bounded; deeper validation pending workbook content build.",
+  "prepared_by": "Noah Green CPA CFE"
 }

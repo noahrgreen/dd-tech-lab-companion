@@ -1,9 +1,24 @@
 {
   "article_no": "010",
-  "title": "Correlation Diagnostics for Journal-Entry Pairs in Excel",
-  "series": "Excel Fraud Analytics",
-  "status": "starter_bundle",
+  "title": "Correlation Diagnostics for Journal-Entry Pairs in Excel — Detecting Round-Tripping and Mirror-Posting Patterns",
+  "series": "Claude in Excel for Fraud Detection",
+  "status": "validated_bundle",
+  "validation_status_detail": "validated_at_tab_structure_scope",
+  "source_article": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v6/010_correlation-diagnostics_DRAFT_v6_2026-05-13.md",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/seeds/010_correlation-diagnostics-journal-entry-pairs_seed_DRAFT_v1_2026-05-13.md",
-  "workbook_path": "workbooks/010-correlation-diagnostics-journal-entry-pairs.xlsx",
-  "quality_standard": "Workbook starter scaffold only; formulas, examples, and assertions must be finalized against the canonical article before public linking."
+  "workbook_path": "../../workbooks/010-correlation-diagnostics-journal-entry-pairs.xlsx",
+  "audit_artifact": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/coordination/excel_content_match_audit_2026-05-15.json",
+  "validation_scope": [
+    "Workbook tab structure matches article-described workpaper organization (README, Inputs, Pairing Matrix, Correlation Signals, Checks).",
+    "Article exists in v6 draft state with ensemble scoring artifacts.",
+    "Audit script verifies tab presence; result captured in audit JSON."
+  ],
+  "known_limits": [
+    "Tab content is scaffold-level: each tab has 2-4 placeholder rows, NOT the full pairing-matrix construction / Pearson + Spearman correlation computation / round-tripping signal detection the article describes.",
+    "Cell-level content fidelity (account-pair construction, PEARSON / SPEARMAN.RHO / CORREL formulas, anti-correlation threshold flags, mirror-posting pattern detection, sample journal-entry data) is the NEXT promotion stage.",
+    "Readers expecting a working downloadable workbook with the article's correlation diagnostics will find tab structure but not populated content."
+  ],
+  "next_promotion_stage": "Build out each tab's content to match article-described formulas, sample data (journal-entry extract with synthetic round-tripping pairs), and named ranges. Approximately 4-6 hours per workbook for full content fidelity.",
+  "framing_discipline": "Validated at TAB-STRUCTURE scope only. Bundle scope intentionally bounded; deeper validation pending workbook content build.",
+  "prepared_by": "Noah Green CPA CFE"
 }

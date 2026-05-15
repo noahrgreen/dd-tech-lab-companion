@@ -1,0 +1,370 @@
+{
+  "generated_at_utc": "2026-05-15T19:22:07.100919+00:00",
+  "scope": "Excel-fraud companion-bundle tab-structure audit (Articles 002/003/004/007/010)",
+  "results": [
+    {
+      "article": "Excel 002",
+      "article_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v4/002_same-same-different-in-excel_DRAFT_v4_2026-05-13.md",
+      "workbook_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/companion_repo_dd_tech_lab/workbooks/002-same-same-different.xlsx",
+      "article_exists": true,
+      "workbook_exists": true,
+      "expected_tabs": [
+        "README",
+        "Inputs",
+        "Pairing Logic",
+        "Exception Review",
+        "Checks"
+      ],
+      "actual_tabs": [
+        "README",
+        "Inputs",
+        "Pairing Logic",
+        "Exception Review",
+        "Checks"
+      ],
+      "tab_match": true,
+      "checks": [
+        {
+          "name": "all_expected_tabs_present",
+          "passed": true,
+          "missing_tabs": [],
+          "reason": "workbook must contain tabs ['README', 'Inputs', 'Pairing Logic', 'Exception Review', 'Checks']"
+        },
+        {
+          "name": "no_unexpected_tabs",
+          "passed": true,
+          "extra_tabs": [],
+          "reason": "tabs not declared by article would be a structural divergence"
+        },
+        {
+          "name": "tabs_have_content_beyond_placeholder",
+          "passed": false,
+          "n_populated": 0,
+          "n_sparse": 5,
+          "reason": "Production-ready workbook would have >5 rows per content tab; starter workbooks have placeholder rows only"
+        }
+      ],
+      "scope_caveats": [
+        "This audit verifies tab-structure match only.",
+        "Cell-level content fidelity (formulas, sample data, ranges named in article) is NOT verified.",
+        "Workbook is a starter scaffold; full content build is the next promotion stage."
+      ],
+      "populated_tabs": [],
+      "sparse_tabs": [
+        {
+          "tab": "README",
+          "max_row": 4
+        },
+        {
+          "tab": "Inputs",
+          "max_row": 2
+        },
+        {
+          "tab": "Pairing Logic",
+          "max_row": 2
+        },
+        {
+          "tab": "Exception Review",
+          "max_row": 2
+        },
+        {
+          "tab": "Checks",
+          "max_row": 2
+        }
+      ],
+      "verdict": "tab_structure_match_scaffold_only"
+    },
+    {
+      "article": "Excel 003",
+      "article_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v6/003_linear-regression-outlier-detection_DRAFT_v6_2026-05-13.md",
+      "workbook_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/companion_repo_dd_tech_lab/workbooks/003-linear-regression-outlier-detection.xlsx",
+      "article_exists": true,
+      "workbook_exists": true,
+      "expected_tabs": [
+        "README",
+        "Inputs",
+        "Regression Model",
+        "Residual Review",
+        "Checks"
+      ],
+      "actual_tabs": [
+        "README",
+        "Inputs",
+        "Regression Model",
+        "Residual Review",
+        "Checks"
+      ],
+      "tab_match": true,
+      "checks": [
+        {
+          "name": "all_expected_tabs_present",
+          "passed": true,
+          "missing_tabs": [],
+          "reason": "workbook must contain tabs ['README', 'Inputs', 'Regression Model', 'Residual Review', 'Checks']"
+        },
+        {
+          "name": "no_unexpected_tabs",
+          "passed": true,
+          "extra_tabs": [],
+          "reason": "tabs not declared by article would be a structural divergence"
+        },
+        {
+          "name": "tabs_have_content_beyond_placeholder",
+          "passed": false,
+          "n_populated": 0,
+          "n_sparse": 5,
+          "reason": "Production-ready workbook would have >5 rows per content tab; starter workbooks have placeholder rows only"
+        }
+      ],
+      "scope_caveats": [
+        "This audit verifies tab-structure match only.",
+        "Cell-level content fidelity (formulas, sample data, ranges named in article) is NOT verified.",
+        "Workbook is a starter scaffold; full content build is the next promotion stage."
+      ],
+      "populated_tabs": [],
+      "sparse_tabs": [
+        {
+          "tab": "README",
+          "max_row": 4
+        },
+        {
+          "tab": "Inputs",
+          "max_row": 2
+        },
+        {
+          "tab": "Regression Model",
+          "max_row": 2
+        },
+        {
+          "tab": "Residual Review",
+          "max_row": 2
+        },
+        {
+          "tab": "Checks",
+          "max_row": 2
+        }
+      ],
+      "verdict": "tab_structure_match_scaffold_only"
+    },
+    {
+      "article": "Excel 004",
+      "article_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v4/004_geospatial-address-mapping_DRAFT_v4_2026-05-13.md",
+      "workbook_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/companion_repo_dd_tech_lab/workbooks/004-geospatial-address-mapping.xlsx",
+      "article_exists": true,
+      "workbook_exists": true,
+      "expected_tabs": [
+        "README",
+        "Inputs",
+        "Coordinate Prep",
+        "Distance Review",
+        "Checks"
+      ],
+      "actual_tabs": [
+        "README",
+        "Inputs",
+        "Coordinate Prep",
+        "Distance Review",
+        "Checks"
+      ],
+      "tab_match": true,
+      "checks": [
+        {
+          "name": "all_expected_tabs_present",
+          "passed": true,
+          "missing_tabs": [],
+          "reason": "workbook must contain tabs ['README', 'Inputs', 'Coordinate Prep', 'Distance Review', 'Checks']"
+        },
+        {
+          "name": "no_unexpected_tabs",
+          "passed": true,
+          "extra_tabs": [],
+          "reason": "tabs not declared by article would be a structural divergence"
+        },
+        {
+          "name": "tabs_have_content_beyond_placeholder",
+          "passed": false,
+          "n_populated": 0,
+          "n_sparse": 5,
+          "reason": "Production-ready workbook would have >5 rows per content tab; starter workbooks have placeholder rows only"
+        }
+      ],
+      "scope_caveats": [
+        "This audit verifies tab-structure match only.",
+        "Cell-level content fidelity (formulas, sample data, ranges named in article) is NOT verified.",
+        "Workbook is a starter scaffold; full content build is the next promotion stage."
+      ],
+      "populated_tabs": [],
+      "sparse_tabs": [
+        {
+          "tab": "README",
+          "max_row": 4
+        },
+        {
+          "tab": "Inputs",
+          "max_row": 2
+        },
+        {
+          "tab": "Coordinate Prep",
+          "max_row": 2
+        },
+        {
+          "tab": "Distance Review",
+          "max_row": 2
+        },
+        {
+          "tab": "Checks",
+          "max_row": 2
+        }
+      ],
+      "verdict": "tab_structure_match_scaffold_only"
+    },
+    {
+      "article": "Excel 007",
+      "article_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v6/007_round-number-bias-threshold-avoidance_DRAFT_v6_2026-05-13.md",
+      "workbook_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/companion_repo_dd_tech_lab/workbooks/007-round-number-bias-threshold-avoidance.xlsx",
+      "article_exists": true,
+      "workbook_exists": true,
+      "expected_tabs": [
+        "README",
+        "Inputs",
+        "Digit Flags",
+        "Threshold Bands",
+        "Checks"
+      ],
+      "actual_tabs": [
+        "README",
+        "Inputs",
+        "Digit Flags",
+        "Threshold Bands",
+        "Checks"
+      ],
+      "tab_match": true,
+      "checks": [
+        {
+          "name": "all_expected_tabs_present",
+          "passed": true,
+          "missing_tabs": [],
+          "reason": "workbook must contain tabs ['README', 'Inputs', 'Digit Flags', 'Threshold Bands', 'Checks']"
+        },
+        {
+          "name": "no_unexpected_tabs",
+          "passed": true,
+          "extra_tabs": [],
+          "reason": "tabs not declared by article would be a structural divergence"
+        },
+        {
+          "name": "tabs_have_content_beyond_placeholder",
+          "passed": false,
+          "n_populated": 0,
+          "n_sparse": 5,
+          "reason": "Production-ready workbook would have >5 rows per content tab; starter workbooks have placeholder rows only"
+        }
+      ],
+      "scope_caveats": [
+        "This audit verifies tab-structure match only.",
+        "Cell-level content fidelity (formulas, sample data, ranges named in article) is NOT verified.",
+        "Workbook is a starter scaffold; full content build is the next promotion stage."
+      ],
+      "populated_tabs": [],
+      "sparse_tabs": [
+        {
+          "tab": "README",
+          "max_row": 4
+        },
+        {
+          "tab": "Inputs",
+          "max_row": 2
+        },
+        {
+          "tab": "Digit Flags",
+          "max_row": 2
+        },
+        {
+          "tab": "Threshold Bands",
+          "max_row": 2
+        },
+        {
+          "tab": "Checks",
+          "max_row": 2
+        }
+      ],
+      "verdict": "tab_structure_match_scaffold_only"
+    },
+    {
+      "article": "Excel 010",
+      "article_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v6/010_correlation-diagnostics_DRAFT_v6_2026-05-13.md",
+      "workbook_path": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/companion_repo_dd_tech_lab/workbooks/010-correlation-diagnostics-journal-entry-pairs.xlsx",
+      "article_exists": true,
+      "workbook_exists": true,
+      "expected_tabs": [
+        "README",
+        "Inputs",
+        "Pairing Matrix",
+        "Correlation Signals",
+        "Checks"
+      ],
+      "actual_tabs": [
+        "README",
+        "Inputs",
+        "Pairing Matrix",
+        "Correlation Signals",
+        "Checks"
+      ],
+      "tab_match": true,
+      "checks": [
+        {
+          "name": "all_expected_tabs_present",
+          "passed": true,
+          "missing_tabs": [],
+          "reason": "workbook must contain tabs ['README', 'Inputs', 'Pairing Matrix', 'Correlation Signals', 'Checks']"
+        },
+        {
+          "name": "no_unexpected_tabs",
+          "passed": true,
+          "extra_tabs": [],
+          "reason": "tabs not declared by article would be a structural divergence"
+        },
+        {
+          "name": "tabs_have_content_beyond_placeholder",
+          "passed": false,
+          "n_populated": 0,
+          "n_sparse": 5,
+          "reason": "Production-ready workbook would have >5 rows per content tab; starter workbooks have placeholder rows only"
+        }
+      ],
+      "scope_caveats": [
+        "This audit verifies tab-structure match only.",
+        "Cell-level content fidelity (formulas, sample data, ranges named in article) is NOT verified.",
+        "Workbook is a starter scaffold; full content build is the next promotion stage."
+      ],
+      "populated_tabs": [],
+      "sparse_tabs": [
+        {
+          "tab": "README",
+          "max_row": 4
+        },
+        {
+          "tab": "Inputs",
+          "max_row": 2
+        },
+        {
+          "tab": "Pairing Matrix",
+          "max_row": 2
+        },
+        {
+          "tab": "Correlation Signals",
+          "max_row": 2
+        },
+        {
+          "tab": "Checks",
+          "max_row": 2
+        }
+      ],
+      "verdict": "tab_structure_match_scaffold_only"
+    }
+  ],
+  "counts": {
+    "tab_structure_match_scaffold_only": 5
+  },
+  "framing": "Tab-structure audit only. Workbook cell-level content fidelity is a separate (deeper) promotion stage."
+}

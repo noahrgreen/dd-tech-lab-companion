@@ -1,9 +1,24 @@
 {
   "article_no": "007",
-  "title": "Round-Number Bias and Threshold Avoidance in Excel",
-  "series": "Excel Fraud Analytics",
-  "status": "starter_bundle",
+  "title": "Round-Number Bias and Threshold Avoidance in Excel — Detecting Just-Under-Authorization-Limit Manipulation Patterns",
+  "series": "Claude in Excel for Fraud Detection",
+  "status": "validated_bundle",
+  "validation_status_detail": "validated_at_tab_structure_scope",
+  "source_article": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v6/007_round-number-bias-threshold-avoidance_DRAFT_v6_2026-05-13.md",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/seeds/007_round-number-bias-threshold-avoidance_seed_DRAFT_v1_2026-05-13.md",
-  "workbook_path": "workbooks/007-round-number-bias-threshold-avoidance.xlsx",
-  "quality_standard": "Workbook starter scaffold only; formulas, examples, and assertions must be finalized against the canonical article before public linking."
+  "workbook_path": "../../workbooks/007-round-number-bias-threshold-avoidance.xlsx",
+  "audit_artifact": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/coordination/excel_content_match_audit_2026-05-15.json",
+  "validation_scope": [
+    "Workbook tab structure matches article-described workpaper organization (README, Inputs, Digit Flags, Threshold Bands, Checks).",
+    "Article exists in v6 draft state with ensemble scoring artifacts.",
+    "Audit script verifies tab presence; result captured in audit JSON."
+  ],
+  "known_limits": [
+    "Tab content is scaffold-level: each tab has 2-4 placeholder rows, NOT the full digit-flag formulas / threshold-band-bunching detection / authorization-limit just-under-pattern logic the article describes.",
+    "Cell-level content fidelity (RIGHT/MOD/MID parsing for last-digit analysis, COUNTIFS for threshold-band bunching, chi-squared goodness-of-fit against uniform-digit expectation, authorization-threshold cross-reference table) is the NEXT promotion stage.",
+    "Readers expecting a working downloadable workbook with the article's threshold-avoidance detection will find tab structure but not populated content."
+  ],
+  "next_promotion_stage": "Build out each tab's content to match article-described formulas, sample data (transaction extract with synthetic just-under-threshold pattern), and named ranges. Approximately 4-6 hours per workbook for full content fidelity.",
+  "framing_discipline": "Validated at TAB-STRUCTURE scope only. Bundle scope intentionally bounded; deeper validation pending workbook content build.",
+  "prepared_by": "Noah Green CPA CFE"
 }

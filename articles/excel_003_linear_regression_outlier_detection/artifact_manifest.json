@@ -1,9 +1,25 @@
 {
   "article_no": "003",
-  "title": "Linear Regression Outlier Detection in Excel",
-  "series": "Excel Fraud Analytics",
-  "status": "starter_bundle",
+  "title": "Linear Regression for Outlier Detection in Excel — Building the Standardized-Residual Workpaper for Expense-Account Analytics",
+  "series": "Claude in Excel for Fraud Detection",
+  "status": "validated_bundle",
+  "validation_status_detail": "validated_at_tab_structure_scope",
+  "source_article": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/articles_v6/003_linear-regression-outlier-detection_DRAFT_v6_2026-05-13.md",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/seeds/003_linear-regression-outlier-detection-in-excel_seed_DRAFT_v1_2026-05-13.md",
-  "workbook_path": "workbooks/003-linear-regression-outlier-detection.xlsx",
-  "quality_standard": "Workbook starter scaffold only; formulas, examples, and assertions must be finalized against the canonical article before public linking."
+  "workbook_path": "../../workbooks/003-linear-regression-outlier-detection.xlsx",
+  "audit_artifact": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/coordination/excel_content_match_audit_2026-05-15.json",
+  "validation_scope": [
+    "Workbook tab structure matches article-described workpaper organization (README, Inputs, Regression Model, Residual Review, Checks).",
+    "Article exists in v6 draft state with ensemble scoring artifacts.",
+    "Audit script verifies tab presence; result captured in audit JSON."
+  ],
+  "known_limits": [
+    "Tab content is scaffold-level: each tab has 2-4 placeholder rows, NOT the full LINEST formulas / standardized-residual computation / sample driver-expense data / FILTER-based outlier extraction the article describes.",
+    "Cell-level content fidelity (LINEST setup, residual standardization with explicit degrees-of-freedom, conditional formatting for outlier flagging, Claude-prompt cells for pre-flight validation) is the NEXT promotion stage.",
+    "Readers expecting a working downloadable workbook with the article's complete worked example will find tab structure but not populated content.",
+    "AS 2305.14-.16 precision-of-the-expectation framework discussion in the article is not represented in workbook cells."
+  ],
+  "next_promotion_stage": "Build out each tab's content to match article-described formulas, sample data, and named ranges. Approximately 4-6 hours per workbook for full content fidelity.",
+  "framing_discipline": "Validated at TAB-STRUCTURE scope only. Bundle scope intentionally bounded; deeper validation pending workbook content build.",
+  "prepared_by": "Noah Green CPA CFE"
 }
