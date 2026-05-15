@@ -1,5 +1,189 @@
+# Quiver Query Pack — Counterparty Investigation Patterns
+#
+# Companion artifact for Foundry Article 007. Quiver is Foundry's
+# lightweight-query tool — instant-query mode + parameterized queries +
+# visualization primitives + share-link mechanics. These patterns serve the
+# under-five-minute time-to-answer workflow that doesn't justify a full
+# Workshop application build.
+#
+# The YAML schema below mirrors Quiver's saved-query structure; portable
+# enough that the patterns transfer to other ad-hoc-query tools (Snowflake
+# Streamlit-on-Snowflake, Databricks Lakeview, etc.).
+
 queries:
-  - name: exposure_to_issuer
-    prompt: Which counterparties have direct or indirect exposure to issuer X?
-  - name: sanctions_overlap
-    prompt: Which counterparties share a beneficial owner with any active sanctions hit?
+  # ── 1. Counterparty exposure to a specific issuer (the seed's worked example) ──
+  - name: counterparty_exposure_to_issuer
+    description: |
+      Returns counterparties with direct transaction exposure to a named
+      issuer above a USD threshold, grouped by jurisdiction with rollups.
+      The canonical "news event just dropped — who's exposed" query.
+    target_object_class: Counterparty
+    filters:
+      - has_link: TransactedWith
+      - link_target.issuer_id == :issuer_id_parameter
+      - TransactedWith.volume_usd >= :min_volume_parameter
+    aggregations:
+      - count: counterparties
+      - sum: TransactedWith.volume_usd
+      - group_by: jurisdiction
+    visualization:
+      primary: bar_chart
+      bar_chart:
+        x_axis: jurisdiction
+        y_axis: counterparty_count
+        sort: y_axis_desc
+      data_table:
+        columns:
+          - counterparty_id
+          - legal_name
+          - jurisdiction
+          - total_volume_usd
+          - last_transaction_date
+        sort: total_volume_usd_desc
+    parameters:
+      - name: issuer_id_parameter
+        type: string
+        prompt: "Issuer ID to scan exposure for"
+        validation: non_empty
+      - name: min_volume_parameter
+        type: number
+        default: 100000
+        prompt: "Minimum USD exposure threshold"
+        validation: positive_number
+    share_link_default_permission: read_only
+    expected_runtime:
+      typical: under_5_seconds
+      large_universe_warning: |
+        Queries against > 1M Counterparty objects may exceed Quiver's
+        instant-query envelope. Materialize an issuer-exposure rollup
+        dataset (Pipeline Builder) and query against that instead.
+
+  # ── 2. Sanctions overlap via beneficial ownership ──
+  - name: sanctions_overlap_via_beneficial_owner
+    description: |
+      Returns counterparties that share a beneficial owner with any
+      currently-active sanctions hit. Cross-references the
+      BeneficialOwnership ontology (Article 009) with active SanctionsHits.
+    target_object_class: Counterparty
+    filters:
+      - has_link: BeneficialOwner
+      - BeneficialOwner.person_id in (
+          select person_id from SanctionsHit
+          where SanctionsHit.status == 'active'
+            and SanctionsHit.effective_date >= today - 365
+        )
+    aggregations:
+      - count: counterparties
+      - group_by: sanctions_list_id
+    visualization:
+      primary: data_table
+      data_table:
+        columns:
+          - counterparty_id
+          - legal_name
+          - shared_owner_person_id
+          - shared_owner_name
+          - sanctions_list_id
+          - sanctions_effective_date
+        sort: sanctions_effective_date_desc
+      secondary: network_diagram
+      network_diagram:
+        nodes:
+          - Counterparty
+          - Person (beneficial owner)
+          - SanctionsHit
+        edges:
+          - BeneficialOwner
+          - SanctionsListMembership
+    parameters: []   # uses today as the active-date anchor — no user input
+    share_link_default_permission: read_only
+
+  # ── 3. Counterparty adverse-media density quantile screen ──
+  - name: adverse_media_density_quantile_screen
+    description: |
+      Returns counterparties in the top-quantile of adverse-media mention
+      density over a lookback window. Used for routine portfolio review
+      cycles ("show me the 90th-percentile-and-above") and for ad-hoc
+      strategy-meeting questions.
+    target_object_class: Counterparty
+    filters:
+      - Counterparty.mention_count_90d.percentile >= :quantile_threshold
+    aggregations:
+      - count: counterparties
+      - group_by: risk_rating
+    visualization:
+      primary: data_table
+      data_table:
+        columns:
+          - counterparty_id
+          - legal_name
+          - risk_rating
+          - mention_count_90d
+          - mention_count_90d_percentile
+        sort: mention_count_90d_desc
+      secondary: histogram
+      histogram:
+        field: mention_count_90d
+        bins: 50
+        overlay_threshold: :quantile_threshold
+    parameters:
+      - name: quantile_threshold
+        type: number
+        default: 0.9
+        prompt: "Top-quantile cutoff (0.0-1.0; default 0.9 = top 10%)"
+        validation: between_0_and_1
+
+  # ── 4. Recent rating-change activity by analyst (cross-ref with Article 005) ──
+  - name: rating_change_volume_by_analyst
+    description: |
+      Returns aggregate rating-change Actions by analyst over a window.
+      Cross-references AuditEntry from Article 005's Actions framework —
+      Quiver here is read-only on the AuditEntry ontology object.
+    target_object_class: AuditEntry
+    filters:
+      - action_type in ['ElevateRiskRating', 'LowerRiskRating']
+      - timestamp >= :window_start
+    aggregations:
+      - count: action_id
+      - group_by: actor
+    visualization:
+      primary: bar_chart
+      bar_chart:
+        x_axis: actor
+        y_axis: action_count
+        sort: y_axis_desc
+      data_table:
+        columns:
+          - actor
+          - action_count
+          - critical_elevations_count
+          - timestamp_first
+          - timestamp_last
+    parameters:
+      - name: window_start
+        type: date
+        default: today_minus_30_days
+        prompt: "Window start date"
+    audit_note: |
+      Reading AuditEntry data does NOT modify AuditEntry data. Quiver
+      activity is logged in the platform-side activity log but does not
+      generate new AuditEntry objects. See audit_considerations.md.
+
+  # ── 5. Quick portfolio-level distribution view ──
+  - name: portfolio_risk_distribution
+    description: |
+      Counterparty count by risk_rating, jurisdiction, and a chosen
+      secondary dimension. Strategy-meeting-friendly view; runs in seconds.
+    target_object_class: Counterparty
+    filters: []
+    aggregations:
+      - count: counterparties
+      - group_by: [risk_rating, jurisdiction]
+    visualization:
+      primary: heatmap
+      heatmap:
+        x_axis: jurisdiction
+        y_axis: risk_rating
+        cell_value: counterparty_count
+      secondary: data_table
+    parameters: []

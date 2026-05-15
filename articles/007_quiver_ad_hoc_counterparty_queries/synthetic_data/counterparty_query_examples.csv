@@ -1,3 +1,6 @@
-query_name,input,expected_shape
-exposure_to_issuer,issuer_name,counterparty list with exposure path
-sanctions_overlap,sanctions_entity,counterparties + shared owner
+query_name,parameter_input,expected_result_shape,typical_runtime_seconds,large_universe_caveat
+counterparty_exposure_to_issuer,"issuer_id_parameter=ISS-00042; min_volume_parameter=100000","Data table 0-50 rows + bar chart by jurisdiction",2-5,Materialize exposure rollup if Counterparty count > 1M
+sanctions_overlap_via_beneficial_owner,"(no parameters; today-anchored)","Data table 0-20 rows + network diagram",3-8,May timeout if BeneficialOwner ontology > 500K rows; consider materialized view
+adverse_media_density_quantile_screen,quantile_threshold=0.9,"Data table top 10% counterparties + histogram",1-3,No special caveat at typical scale
+rating_change_volume_by_analyst,window_start=today_minus_30_days,Bar chart by actor + data table,1-2,Index on AuditEntry.timestamp required for sub-second runtime
+portfolio_risk_distribution,(no parameters),"Heatmap (risk_rating x jurisdiction) + data table",1-2,No special caveat

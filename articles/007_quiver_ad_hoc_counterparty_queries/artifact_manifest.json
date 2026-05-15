@@ -1,8 +1,22 @@
 {
   "article_no": "007",
-  "title": "Quiver for Ad-Hoc Counterparty Queries \u2014 Lightweight Investigator Tooling Without a Full Workshop Build",
+  "title": "Quiver for Ad-Hoc Counterparty Queries — Lightweight Investigator Tooling Without a Full Workshop Build",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/007_quiver-ad-hoc-counterparty-queries_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "5 Quiver queries cover the seed's worked example + 4 supplementary patterns; each query has target_object_class, filters, aggregations, visualization (primary + secondary primitives), parameters, share_link_default_permission, expected_runtime.",
+    "7-criterion graduation-criteria checklist with threshold rules and cost-of-getting-it-wrong analysis in each direction.",
+    "Audit-considerations doc captures the load-bearing regulatory framing: what Quiver activity logs capture / do not capture, the snapshot discipline bridging to Article 005's AuditEntry, mapping to SR 11-7 §V, FFIEC BSA/AML, PCAOB AS 2201.",
+    "Synthetic-data CSV summarizes the 5 queries' inputs, expected result shapes, runtime estimates, large-universe caveats.",
+    "Screenshot-equivalents render Quiver Instant-Query Mode, Query Result, Save-As-Parameterized, Share Link, Graduation-Criteria Self-Assessment."
+  ],
+  "known_limits": [
+    "Portable companion bundle; YAML query specs require re-keying into Quiver UI to execute.",
+    "Institution-specific ontology adaptations not represented.",
+    "Quiver visualization rendering happens in the platform; screen-equivalents only show layout.",
+    "Graduation-criteria checklist is heuristic (4-of-7); institution-specific calibration may shift the threshold."
+  ],
+  "framing_discipline": "Quiver is for one-off questions; Workshop (Article 003) is for repeated workflows. The bundle's editorial center is the decision framework + audit-trail bridge to Article 005, not a Quiver vendor pitch. Patterns transfer to Snowflake Streamlit-on-Snowflake and Databricks Lakeview with minor adjustments.",
+  "prepared_by": "Noah Green CPA CFE"
 }
