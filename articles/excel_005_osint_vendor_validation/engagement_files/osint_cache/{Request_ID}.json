@@ -1,0 +1,9 @@
+{
+  "request_id": "{Request_ID}",
+  "vendor_id": "V047",
+  "registry_status": "active",
+  "adverse_media_hits": 6,
+  "risk_score": 88,
+  "generated_at_utc": "2026-05-14T00:00:00Z",
+  "note": "Synthetic cache template for article companion use only"
+}
