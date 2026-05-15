@@ -1,0 +1,175 @@
+# 5-Year TCO Template — Platform-Decision Bundle
+#
+# Parameterizable TCO model template. The TCO calculation is institution-
+# specific; the values in this template are placeholders illustrating the
+# component structure, NOT vendor pricing recommendations. Real vendor
+# quotes vary 2-3x depending on contract negotiation, deployment scope,
+# and institutional volume.
+#
+# Use this template to structure the institution's own TCO analysis;
+# replace all placeholder values with actual vendor quotes + institutional
+# cost-model inputs before relying on the result for a procurement decision.
+
+template_version: 1.0
+prepared_by: Noah Green CPA CFE
+as_of_date: 2026-05-15
+
+institutional_inputs:
+  # Replace these with the institution's actual scale + workload assumptions
+  expected_avg_concurrent_users: 50
+  expected_peak_concurrent_users: 150
+  data_volume_gb_year_1: 5000
+  data_volume_growth_rate: 0.30  # 30% YoY
+  expected_pipeline_runs_per_day: 500
+  expected_workshop_apps_active: 8
+  expected_aip_calls_per_day: 1000
+
+# ─── Foundry-archetype 5-year TCO ─────────────────────────────────────
+foundry_archetype:
+  pricing_model: enterprise_licensed
+  components:
+    platform_license_year_1:
+      placeholder_value_usd: REPLACE_WITH_VENDOR_QUOTE
+      notes: |
+        Typical structure: annual subscription with floor + per-user
+        adders + Workshop app uplift. Vendor quote required.
+    platform_license_growth_yoy: 0.08
+    implementation_year_1:
+      placeholder_value_usd: REPLACE_WITH_SI_QUOTE
+      notes: |
+        Initial ontology design + Workshop app build-out + Pipeline
+        Builder transforms + Code Repository scaffolding. Typically
+        $1-3M at bank-group scale per Article 010 publicly-available
+        case studies; rerun with current SI rates.
+    internal_engineering_annual_fte:
+      headcount_year_1: 4
+      headcount_year_5: 8
+      fully_loaded_per_fte_usd: 250000
+    training_year_1: 75000
+    training_annual_recurring: 25000
+    palantir_specific_skills_hiring_premium: 0.15
+  five_year_total_calculation: |
+    sum(years 1-5):
+      platform_license * (1 + growth_yoy)^(year-1)
+      + (year 1 implementation if year == 1)
+      + headcount * fully_loaded * (1 + skills_hiring_premium)
+      + training_year_1 if year == 1 else training_annual_recurring
+  qualitative_notes:
+    - Cost is more predictable than consumption-priced alternatives
+    - Vendor lock-in inflates exit cost in years 3-5
+    - Implementation cost concentrates in year 1; reduces volatility
+
+# ─── Snowflake + DBT 5-year TCO ────────────────────────────────────────
+snowflake_dbt_archetype:
+  pricing_model: consumption_priced
+  components:
+    snowflake_compute_year_1:
+      placeholder_value_usd: REPLACE_WITH_VENDOR_QUOTE
+      notes: |
+        Credit-based consumption: warehouse size × hours × concurrency.
+        Bank-group scale typically $400K-1.5M year-1 depending on workload.
+    snowflake_storage_year_1: 0.05_per_gb_month
+    dbt_cloud_annual: REPLACE_WITH_VENDOR_QUOTE
+    streamlit_on_snowflake: included_in_snowflake_compute
+    custom_application_layer_implementation:
+      placeholder_value_usd: REPLACE_WITH_SI_QUOTE
+      notes: |
+        Build-yourself ontology layer on top of warehouse: typical 9-18
+        months engineering build at $2-5M depending on scope. The
+        equivalent of Foundry's bundled Ontology + Workshop value.
+        Without this build, the architecture lacks DD-specific patterns;
+        with it, the platform comparison includes the build cost.
+    internal_engineering_annual_fte:
+      headcount_year_1: 6  # higher to support build-yourself layer
+      headcount_year_5: 10
+      fully_loaded_per_fte_usd: 220000  # broader skill pool, lower premium
+    training_year_1: 50000
+    training_annual_recurring: 15000
+    audit_trail_implementation_year_1:
+      placeholder_value_usd: REPLACE_WITH_QUOTE
+      notes: |
+        Build-yourself audit-trail discipline equivalent to Foundry
+        Actions framework: typical 4-8 months engineering build at
+        $400K-1.2M. See Article 005 bundle for the audit-trail
+        requirements being built.
+  five_year_total_calculation: |
+    sum(years 1-5):
+      compute * (1 + workload_growth_rate)^(year-1)
+      + storage * data_volume(year)
+      + dbt_cloud
+      + (custom_application + audit_trail_implementation if year == 1 else 0)
+      + headcount * fully_loaded
+      + training
+  qualitative_notes:
+    - Cost scales with usage; predictability requires capacity forecasting
+    - Lock-in lowest; cross-platform portability strongest
+    - Year-1 build cost concentrates the engineering effort but creates a
+      cumulatively portable asset
+
+# ─── Databricks + Unity Catalog 5-year TCO ─────────────────────────────
+databricks_unity_archetype:
+  pricing_model: consumption_priced
+  components:
+    databricks_compute_year_1:
+      placeholder_value_usd: REPLACE_WITH_VENDOR_QUOTE
+      notes: |
+        DBU-based consumption (Photon engine optional). Bank-group scale
+        typically $500K-1.8M year-1.
+    databricks_storage_year_1: cloud_provider_passthrough
+    lakeview_dbsql: included_in_databricks_compute
+    custom_application_layer_implementation:
+      placeholder_value_usd: REPLACE_WITH_SI_QUOTE
+      notes: |
+        Build-yourself ontology layer on top of lakehouse: typical 9-18
+        months engineering build at $2-5M. Unity Catalog provides
+        object-level governance partially; DD-domain ontology patterns
+        require additional build.
+    internal_engineering_annual_fte:
+      headcount_year_1: 6  # similar to Snowflake archetype
+      headcount_year_5: 9
+      fully_loaded_per_fte_usd: 230000
+    training_year_1: 60000
+    training_annual_recurring: 18000
+    audit_trail_implementation_year_1:
+      placeholder_value_usd: REPLACE_WITH_QUOTE
+      notes: |
+        Delta Lake Time Travel provides primitive; comparable build cost
+        to Snowflake's archetype.
+  five_year_total_calculation: |
+    sum(years 1-5):
+      compute * (1 + workload_growth_rate)^(year-1)
+      + storage * data_volume(year)
+      + (custom_application + audit_trail_implementation if year == 1 else 0)
+      + headcount * fully_loaded
+      + training
+  qualitative_notes:
+    - Cost scales with usage and Photon-engine choice
+    - Lock-in medium (Spark + Delta Lake is portable; Unity Catalog adds surface)
+    - Strongest ML/Foundation Models integration of the three
+
+# ─── TCO comparison framing ────────────────────────────────────────────
+# At bank-group scale, the 5-year TCO across all three archetypes
+# typically lands in the same order of magnitude when implementation cost
+# is included. The DECISION-RELEVANT differences are typically:
+#   - Distribution of cost over time (Foundry: year-1-heavy implementation +
+#     predictable annual license; Snowflake/Databricks: year-1-heavy build +
+#     consumption volatility years 2-5)
+#   - Predictability under volume changes (Foundry more predictable; consumption-
+#     priced alternatives more variable)
+#   - Exit cost (Foundry has the highest exit cost due to lock-in; Snowflake +
+#     DBT has the lowest)
+#   - Workforce hiring constraint (Palantir-skilled engineering hiring is
+#     measurably slower than SQL + Python + Spark hiring at most market
+#     locations)
+#
+# The article walks each of these as decision-relevant factors rather than
+# pretending one platform is "cheaper" — at bank-group scale the absolute
+# TCO numbers are close enough that the qualitative factors above
+# typically dominate the procurement decision.
+
+comparison_disclaimer: |
+  All placeholder values must be replaced with current vendor quotes,
+  current SI quotes, and current institutional cost-model inputs before
+  this template produces a number suitable for any procurement decision.
+  TCO comparisons published in vendor marketing materials should be
+  treated as inputs to verify, not endpoints.

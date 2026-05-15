@@ -11,7 +11,7 @@
 | **Foundry 007** | Quiver for Ad-Hoc Counterparty Queries | [validated bundle](articles/007_quiver_ad_hoc_counterparty_queries/) |
 | **Foundry 008** | Time Series in Foundry | [validated bundle](articles/008_time_series_counterparty_risk_trajectories/) |
 | **Foundry 009** | Foundry Ontology Design for Beneficial-Ownership Networks | [validated bundle](articles/009_beneficial_ownership_networks/) |
-| **Foundry 010** | Foundry vs Snowflake + DBT vs Databricks for DD Analytics | [starter bundle](articles/010_platform_tradeoff_framework/) |
+| **Foundry 010** | Foundry vs Snowflake + DBT vs Databricks for DD Analytics | [validated bundle](articles/010_platform_tradeoff_framework/) |
 | **Knowledge Graphs 001** | Beneficial-Ownership Lists to Cypher | [bundle](articles/knowledge_graphs_001_beneficial_ownership_cypher/) · [root csv](ownership_synthetic.csv) |
 | **Stochastic 002** | Modeling Journal-Entry Sequences in Production | [bundle](articles/stochastic_002_journal_entry_sequences/) · [script](stochastic_markov/companion_artifacts/002_journal_entry_production.py) |
 | **Stochastic 004** | Markov Mixture Models for Round-Tripping and Lapping Detection | [bundle](articles/stochastic_004_mixture_round_tripping/) · [script](stochastic_markov/companion_artifacts/004_mixture_round_tripping.py) |

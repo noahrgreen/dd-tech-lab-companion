@@ -1,9 +1,102 @@
-weights:
-  ontology_layer: 0.20
-  investigator_ui: 0.15
-  pipeline_transforms: 0.15
-  llm_integration: 0.10
-  audit_trail: 0.15
-  cost_model: 0.10
-  skill_alignment: 0.10
+# Platform Evaluation Weights — Foundry Article 010 companion
+#
+# Weights for the 10-dimension comparison scorecard. The three preset weight
+# profiles below represent typical institutional archetypes; each
+# institution should produce its own weights through structured elicitation
+# rather than adopting these directly.
+#
+# IMPORTANT: These weights are illustrative profiles, not recommendations.
+# The article's purpose is to demonstrate the comparison framework; the
+# institution's actual platform decision must be grounded in its own
+# weight elicitation, conducted with senior risk-tech leadership and
+# compliance partners.
+
+dimensions:
+  - ontology_layer_native
+  - investigator_ui_native
+  - pipeline_no_code
+  - pipeline_code_path
+  - llm_integration_native
+  - audit_trail_native_immutable
+  - cost_model
+  - skill_alignment_market
+  - vendor_lock_in
+  - regulatory_documentation_maturity
+
+# ── Archetype 1: Large bank with high compliance burden ─────────────────
+# Characteristics: SR 11-7 / SOX §404 / OCC examination cycle; large
+# engineering team; substantial budget; regulatory documentation maturity
+# weighs more than cost; lock-in concerns are real but not deal-breaking.
+large_bank_high_compliance:
+  ontology_layer_native: 0.15
+  investigator_ui_native: 0.10
+  pipeline_no_code: 0.05
+  pipeline_code_path: 0.05
+  llm_integration_native: 0.05
+  audit_trail_native_immutable: 0.20  # heaviest weight: documentation primitives matter most
+  cost_model: 0.05
+  skill_alignment_market: 0.05
+  vendor_lock_in: 0.10
+  regulatory_documentation_maturity: 0.20
+
+# ── Archetype 2: Mid-size advisory shop with cost sensitivity ───────────
+# Characteristics: smaller engineering team; budget-constrained;
+# regulatory burden present but lighter than tier-1 bank; cost and
+# skill-alignment weigh heavily; some lock-in tolerated for productivity.
+mid_size_advisory_cost_sensitive:
+  ontology_layer_native: 0.10
+  investigator_ui_native: 0.10
+  pipeline_no_code: 0.10
+  pipeline_code_path: 0.05
+  llm_integration_native: 0.10
+  audit_trail_native_immutable: 0.10
+  cost_model: 0.20  # heaviest weight: TCO is the dominant constraint
+  skill_alignment_market: 0.10
   vendor_lock_in: 0.05
+  regulatory_documentation_maturity: 0.10
+
+# ── Archetype 3: PE-DD firm with intermittent heavy use ─────────────────
+# Characteristics: episodic high-intensity engagement cycles; engineering
+# capacity limited; consumption-based pricing aligns with usage pattern;
+# cross-engagement portability matters (avoid vendor lock-in on the
+# infrastructure that follows the firm across deals).
+pe_dd_intermittent_heavy_use:
+  ontology_layer_native: 0.10
+  investigator_ui_native: 0.10
+  pipeline_no_code: 0.10
+  pipeline_code_path: 0.05
+  llm_integration_native: 0.10
+  audit_trail_native_immutable: 0.05  # lighter — episodic use, less regulator-facing
+  cost_model: 0.15
+  skill_alignment_market: 0.10
+  vendor_lock_in: 0.20  # heaviest: cross-deal portability is core to PE-DD model
+  regulatory_documentation_maturity: 0.05
+
+# ── Weight elicitation discipline ─────────────────────────────────────
+# Institutions should construct their own weights through structured
+# elicitation. Suggested process:
+#   1. Convene the institution's risk-tech / compliance / engineering
+#      leadership (typically 5-8 senior stakeholders).
+#   2. Pre-distribute the 10-dimension scorecard with each vendor's
+#      qualified state, asking each stakeholder to independently allocate
+#      100 weight points across the 10 dimensions.
+#   3. Average the individual allocations; investigate dimensions where
+#      individual allocations diverge by more than 10 weight points
+#      (these are the dimensions where the institution's leadership
+#      doesn't yet share a common view, and the conversation is
+#      MORE valuable than the vendor decision itself).
+#   4. Iterate until the leadership group converges on a weight set
+#      where no dimension diverges by more than 5 weight points across
+#      stakeholders.
+#   5. Document the final weights AND the elicitation process. The
+#      examiner / board may later ask not just "which platform did
+#      you pick" but "how did you decide".
+
+elicitation_validation_checklist:
+  - All weights sum to 1.00 ± 0.001
+  - No single dimension exceeds 0.30 (avoid the "this one feature
+    decides everything" trap)
+  - At least 6 dimensions have weight ≥ 0.05 (avoid hollowing-out the
+    framework to a 3-feature shootout)
+  - Weights have been reviewed by both risk/compliance and engineering
+    leadership (avoid single-perspective bias)

@@ -1,8 +1,22 @@
 {
   "article_no": "010",
-  "title": "Foundry vs Snowflake + DBT vs Databricks for DD Analytics \u2014 Architecture Trade-Off Framework",
+  "title": "Foundry vs Snowflake + DBT vs Databricks for DD Analytics — Architecture Trade-Off Framework",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/010_foundry-vs-snowflake-dbt-databricks_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "10-dimension scorecard with narrative qualifications per cell + assessment_as_of date stamps; no blanket built-in/build-yourself ratings.",
+    "3 archetype-preset weight profiles with summing-to-1 validation + weight-elicitation discipline section.",
+    "Parameterizable 5-year TCO template with REPLACE_WITH_VENDOR_QUOTE placeholders across all 3 vendor archetypes.",
+    "3 decision archetypes (large bank / mid-size advisory / PE-DD) with priorities, typical-right-answer, case-AGAINST, examiner-readiness framing.",
+    "Hybrid pattern reference architecture with boundary design decisions (data placement, sync mechanics, audit-trail boundary) + cost/complexity trade-off + operational discipline."
+  ],
+  "known_limits": [
+    "Vendor state evolves quarterly; every scorecard cell carries assessment_as_of date inviting re-verification.",
+    "TCO placeholders must be replaced with current vendor quotes before procurement decisions.",
+    "Weight presets are starting points; institution must run its own elicitation process.",
+    "Decision archetypes are illustrative; most institutions are hybrids of 2 archetypes."
+  ],
+  "framing_discipline": "HIGHEST PR-sensitivity article in Foundry sub-series. Discipline rules: (1) every feature claim qualified; (2) every comparison date-stamped; (3) no absolute winner framing; (4) no Gartner-as-scoring-authority citations; (5) TCO numbers are placeholders only; (6) decision archetypes carry case-AGAINST framings. Bundle does NOT recommend a vendor or endorse a weight set.",
+  "prepared_by": "Noah Green CPA CFE"
 }
