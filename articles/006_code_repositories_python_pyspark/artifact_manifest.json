@@ -1,8 +1,22 @@
 {
   "article_no": "006",
-  "title": "Code Repositories in Foundry \u2014 When to Embed Python / PySpark in the Pipeline (and When to Stay in Pipeline Builder)",
+  "title": "Code Repositories in Foundry — When to Embed Python / PySpark in the Pipeline (and When to Stay in Pipeline Builder)",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/006_code-repositories-python-pyspark_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "PySpark transform implements seed's worked example: @transform decorator, 3 Inputs, 1 Output, window function for most-recent-sanctions, 90-day adverse-media aggregation, 3 audit-metadata columns.",
+    "Pure-Spark variant (compute_counterparty_gold_pure) allows pytest without Foundry runtime; 7 contract tests cover counterparty coverage, sanctions window, out-of-window drop, no-sanctions null, adverse-media density, coalesce-to-zero, audit-metadata + idempotence.",
+    "18-criterion decision matrix for Pipeline Builder vs Code Repository.",
+    "7-stage CI/CD template with dual-approval gate for gold-layer regulated-ontology writers and post-deploy reconciliation hook connecting to Article 005 TransformChangeEntry.",
+    "Performance notes cover production-scale failure modes (skew, partition imbalance, shuffle bloat) with concrete mitigation code and pre-production gate criteria."
+  ],
+  "known_limits": [
+    "Portable companion bundle; @transform + Input/Output stubbed for local imports.",
+    "CI/CD template is generic GitLab/GitHub CI shape; institution-specific adaptation required.",
+    "Performance thresholds (N_SALT, target_partitions) are placeholders; tune per institution dataset shape.",
+    "Architecture for > 500M counterparties (streaming aggregation pattern) flagged in performance_notes.md but implemented in Article 008's bundle, not this one."
+  ],
+  "framing_discipline": "The PySpark code is portable Spark; only the @transform decorator + Input/Output API are Foundry-specific. Patterns reusable on Snowflake/Databricks with minor adjustments per Article 010 comparison.",
+  "prepared_by": "Noah Green CPA CFE"
 }

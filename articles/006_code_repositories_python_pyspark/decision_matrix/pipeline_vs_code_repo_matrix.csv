@@ -1,4 +1,19 @@
-criterion,pipeline_builder,code_repo
-simple schema mapping,preferred,not needed
-multi-source custom matching,limited,preferred
-PySpark dependency required,unsupported,required
+criterion,pipeline_builder,code_repo,notes
+simple schema mapping,preferred,unnecessary,No-code is faster to build and maintain for straightforward field-to-field mapping
+date filtering against fixed values,preferred,unnecessary,Pipeline Builder operators handle this natively
+date filtering relative to pipeline_run_timestamp,limited,preferred,Pipeline Builder operators express this awkwardly; PySpark current_date() is the natural form
+windowing (most-recent per group; row_number; rank),unsupported,required,No-code envelope does not include window functions
+multi-source joins on simple keys,preferred,unnecessary,Pipeline Builder join operator handles this
+joins involving array-typed columns,limited,preferred,Array-typed join keys require explicit explode/collect patterns
+conditional aggregations,limited,preferred,Multi-branch CASE-WHEN inside aggregations are awkward in no-code
+custom string-parsing (jurisdictional code variants etc),unsupported,required,Regex + UDF patterns belong in code
+schema-drift handling beyond auto-fail,unsupported,required,Code can implement try/except + fallback logic
+embedded ML inference,unsupported,required,Pipeline Builder has no model-serving operator
+performance tuning (broadcast hints; partition tuning),unsupported,required,Spark-level control is unavailable in no-code
+large-dataset shuffle optimization,unsupported,required,Same as above
+audit metadata columns (pipeline_run_id; transform_version; computed_at),partial,preferred,Pipeline Builder can add pipeline_run_id but transform_version requires code
+unit testing against synthetic input,limited,preferred,pytest + fixtures vs. Pipeline Builder's test-data feature (limited expressive range)
+CI/CD git-based change management,limited,preferred,Code Repos integrate with the institution's Git workflow; Pipeline Builder has its own promotion model
+debuggability when a downstream user asks,strong,depends,Pipeline Builder visualizes the DAG natively; code requires good documentation discipline
+analyst-side editability,strong,weak,Analysts can edit Pipeline Builder transforms without engineering review; code repo PR-gates required
+onboarding time for new engineer,minutes,days-to-weeks,No-code is approachable; PySpark + Foundry transform API has a learning curve

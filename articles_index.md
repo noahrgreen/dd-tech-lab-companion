@@ -7,7 +7,7 @@
 | **Foundry 003** | Workshop Application Patterns for Counterparty Risk Investigators | [validated bundle](articles/003_workshop_application_patterns_investigators/) |
 | **Foundry 004** | AIP-Driven Adverse-Media Summarization for DD Engagements | [validated bundle](articles/004_aip_adverse_media_summarization/) |
 | **Foundry 005** | Foundry Actions Framework for Audit-Trail Discipline | [validated bundle](articles/005_actions_framework_audit_trail_discipline/) |
-| **Foundry 006** | Code Repositories in Foundry | [starter bundle](articles/006_code_repositories_python_pyspark/) |
+| **Foundry 006** | Code Repositories in Foundry | [validated bundle](articles/006_code_repositories_python_pyspark/) |
 | **Foundry 007** | Quiver for Ad-Hoc Counterparty Queries | [starter bundle](articles/007_quiver_ad_hoc_counterparty_queries/) |
 | **Foundry 008** | Time Series in Foundry | [starter bundle](articles/008_time_series_counterparty_risk_trajectories/) |
 | **Foundry 009** | Foundry Ontology Design for Beneficial-Ownership Networks | [validated bundle](articles/009_beneficial_ownership_networks/) |

@@ -1,0 +1,141 @@
+# Foundry Code Repository — CI/CD configuration template
+#
+# Companion artifact for Foundry Article 006. Illustrative CI/CD pipeline for
+# a Code Repository project producing regulated gold-layer ontology object
+# datasets. Drop into .ci/foundry_pipeline.yaml (or equivalent path per your
+# institution's CI platform).
+#
+# The platform-specific keys (`runner`, `stages`) below mirror a generic
+# GitLab/GitHub CI surface; adapt to the institution's actual CI platform.
+
+name: foundry_code_repo_ci_silver_to_gold
+
+variables:
+  PYTHON_VERSION: "3.11"
+  FOUNDRY_PROJECT: "dd_ingestion"
+
+stages:
+  - lint
+  - unit_test
+  - integration_test
+  - security_scan
+  - foundry_build
+  - foundry_deploy_to_staging
+  - manual_approval_gate
+  - foundry_deploy_to_production
+
+# ─── Lint ───
+lint:
+  stage: lint
+  image: python:${PYTHON_VERSION}
+  script:
+    - pip install ruff black mypy
+    - ruff check transforms/ tests/
+    - black --check transforms/ tests/
+    - mypy transforms/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── Unit tests ───
+unit_test:
+  stage: unit_test
+  image: python:${PYTHON_VERSION}
+  script:
+    - pip install -r requirements.txt
+    - pip install pytest pyspark
+    - pytest tests/ -v --tb=short --maxfail=3
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── Integration tests against sampled dataset slices ───
+# Run a smaller slice of the production dataset through the transform.
+# Catches schema-drift failures that synthetic-data unit tests don't.
+integration_test:
+  stage: integration_test
+  image: python:${PYTHON_VERSION}
+  needs: [unit_test]
+  script:
+    - pip install -r requirements.txt
+    - pip install pytest pyspark
+    - pytest tests/integration/ -v --tb=short -m "integration"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  artifacts:
+    paths:
+      - integration_test_report.html
+
+# ─── Security / dependency scanning ───
+security_scan:
+  stage: security_scan
+  image: python:${PYTHON_VERSION}
+  script:
+    - pip install pip-audit
+    - pip-audit --requirement requirements.txt --strict
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── Foundry-side build ───
+foundry_build:
+  stage: foundry_build
+  image: palantir/foundry-cli:latest
+  needs: [unit_test, security_scan]
+  script:
+    - foundry-cli code-repo build --project ${FOUNDRY_PROJECT}
+    - foundry-cli code-repo test --project ${FOUNDRY_PROJECT}  # runs Foundry-side test harness
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── Deploy to Foundry staging environment ───
+foundry_deploy_to_staging:
+  stage: foundry_deploy_to_staging
+  image: palantir/foundry-cli:latest
+  needs: [foundry_build, integration_test]
+  script:
+    - foundry-cli code-repo deploy
+        --project ${FOUNDRY_PROJECT}
+        --environment staging
+        --version ${CI_COMMIT_SHORT_SHA}
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── Manual approval before production ───
+manual_approval_gate:
+  stage: manual_approval_gate
+  needs: [foundry_deploy_to_staging]
+  script:
+    - echo "Awaiting compliance + data-engineering dual approval per institution policy."
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  when: manual
+  allow_failure: false
+  # Approvers (institution-specific roles):
+  #   - data_engineering_lead
+  #   - compliance_data_steward
+  # Both required for gold-layer regulated-ontology-writing transforms.
+
+# ─── Deploy to production ───
+foundry_deploy_to_production:
+  stage: foundry_deploy_to_production
+  image: palantir/foundry-cli:latest
+  needs: [manual_approval_gate]
+  script:
+    - foundry-cli code-repo deploy
+        --project ${FOUNDRY_PROJECT}
+        --environment production
+        --version ${CI_COMMIT_SHORT_SHA}
+    - foundry-cli code-repo log-transform-change
+        --commit-hash ${CI_COMMIT_SHORT_SHA}
+        --actor ${CI_COMMIT_AUTHOR}
+        --approvers ${MANUAL_APPROVAL_USERS}
+        --materiality-assessment-file ./materiality_assessment.md
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# Post-deploy reconciliation hook (institution-specific implementation):
+# Compare aggregate distributions of regulated fields before/after deployment
+# and emit an alert if material drift is detected. The TransformChangeEntry
+# audit trail referenced in Article 005 captures this deployment as an
+# immutable record.
