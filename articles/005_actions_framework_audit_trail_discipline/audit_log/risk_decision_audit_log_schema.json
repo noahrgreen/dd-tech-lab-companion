@@ -1,11 +1,93 @@
 {
-  "action_id": "string",
-  "counterparty_id": "string",
-  "actor": "string",
-  "timestamp": "iso8601",
-  "old_value": "string",
-  "new_value": "string",
-  "evidence_ids": [
-    "string"
-  ]
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/noahrgreen/dd-tech-lab-companion/articles/005/audit_entry_schema.json",
+  "title": "AuditEntry — Foundry Actions Framework",
+  "description": "Schema for the AuditEntry ontology object that every ActionType writes. Immutable once written; supersession via a new AuditEntry referencing the prior action_id, never edit-in-place.",
+  "type": "object",
+  "required": [
+    "action_id",
+    "action_type",
+    "actor",
+    "actor_role",
+    "timestamp",
+    "target_object_id",
+    "prior_state",
+    "new_state",
+    "justification",
+    "supporting_evidence_ids",
+    "immutable"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique UUID. Generated at side_effect execution."
+    },
+    "action_type": {
+      "type": "string",
+      "description": "ActionType name (e.g. 'ElevateRiskRating', 'DismissSanctionsHit', 'EscalateToEDD')."
+    },
+    "actor": {
+      "type": "string",
+      "description": "user_id of the executing user."
+    },
+    "actor_role": {
+      "type": "string",
+      "description": "RBAC role of the actor AT EXECUTION TIME. Snapshot at execution; later role changes do not retroactively alter the audit entry."
+    },
+    "approver": {
+      "type": ["string", "null"],
+      "description": "user_id of the dual-approval approver. Null when dual_approval_required is false."
+    },
+    "approver_role": {
+      "type": ["string", "null"],
+      "description": "RBAC role of the approver at execution time."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp with timezone. Server-generated; not user-supplied."
+    },
+    "target_object_id": {
+      "type": "string",
+      "description": "Identifier of the ontology object affected (e.g. Counterparty.counterparty_id)."
+    },
+    "prior_state": {
+      "type": "object",
+      "description": "Snapshot of the fields the action modified, BEFORE the update. Schema varies by ActionType."
+    },
+    "new_state": {
+      "type": "object",
+      "description": "Snapshot of the same fields, AFTER the update."
+    },
+    "justification": {
+      "type": "string",
+      "minLength": 200,
+      "description": "Analyst-supplied justification text. min_length 200 chars enforced at Action submission per SR 11-7 §V documentation-specificity expectation."
+    },
+    "supporting_evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"},
+      "description": "IDs of supporting-evidence ontology objects (AdverseMediaMention, SanctionsHit, etc.) referenced by the action."
+    },
+    "supporting_evidence_snapshot_uri": {
+      "type": ["string", "null"],
+      "description": "URI to an immutable snapshot of the evidence objects AS THEY EXISTED AT EXECUTION TIME. Critical for examiner-readiness: evidence content can drift; the snapshot preserves what the analyst actually relied on."
+    },
+    "immutable": {
+      "type": "boolean",
+      "const": true,
+      "description": "Always true. Supersession via a new AuditEntry referencing the prior action_id; never edit-in-place."
+    },
+    "superseded_by": {
+      "type": ["string", "null"],
+      "description": "If this AuditEntry has been superseded, the action_id of the superseding entry. Null otherwise. Supersession is rare — used for corrections like wrong target_object_id."
+    },
+    "retention_policy": {
+      "type": "string",
+      "description": "Retention bucket identifier. Default 'regulatory_7_year_minimum' — institution may extend per its own policy but never reduce below regulatory floor."
+    }
+  }
 }

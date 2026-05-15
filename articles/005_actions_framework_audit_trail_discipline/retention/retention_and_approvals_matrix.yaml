@@ -1,5 +1,105 @@
-records:
-  risk_decision_log: 7_years
-  supporting_evidence_snapshot: 7_years
+# Retention + Approvals Matrix — Foundry Article 005 companion
+#
+# Maps each AuditEntry / supporting-data class to its retention floor and the
+# RBAC authority required to trigger / approve each ActionType.
+#
+# DISCLAIMER: Retention floors below are the U.S. federal regulatory minimums
+# for the controls cited. Institution-specific retention policy may be longer
+# (state-level requirements, contractual obligations, ongoing litigation).
+# Treat the values below as floors, not ceilings.
+
+retention:
+  audit_entries:
+    risk_rating_changes:
+      floor: 7_years
+      regulatory_basis: |
+        FFIEC BSA/AML examination manual (CDD/EDD retention expectations);
+        SOX §404 (internal-controls evidence retention); SR 11-7 §V (model
+        risk management documentation retention).
+    sanctions_hit_dispositions:
+      floor: 7_years
+      regulatory_basis: |
+        FinCEN Customer Due Diligence Rule (31 CFR §1010.230);
+        OFAC recordkeeping obligations.
+    edd_escalations:
+      floor: 7_years
+      regulatory_basis: FFIEC BSA/AML examination manual, EDD section
+    model_decisions:
+      floor: 7_years
+      regulatory_basis: SR 11-7 / OCC Bulletin 2011-12 §V
+
+  supporting_evidence_snapshots:
+    adverse_media:
+      floor: 7_years
+      rationale: |
+        The snapshot is what the analyst RELIED ON at decision time. The
+        underlying source article may be updated, paywalled, or deleted by the
+        publisher. The snapshot preserves examiner-relevant evidence integrity.
+    sanctions_screening_results:
+      floor: 7_years
+      rationale: |
+        Sanctions-screening hit-lists evolve. The snapshot preserves what the
+        screening returned AT THAT TIME, which is what the analyst's disposition
+        was actually evaluating.
+    transaction_anomaly_evidence:
+      floor: 7_years
+
 approvals:
-  critical_rating_change: compliance_manager
+  ElevateRiskRating:
+    by_target_rating:
+      - new_risk_rating: medium
+        authorization_level: analyst
+        dual_approval_required: false
+      - new_risk_rating: high
+        authorization_level: senior_analyst
+        dual_approval_required: false
+      - new_risk_rating: critical
+        authorization_level: senior_analyst
+        dual_approval_required: true
+        dual_approver_role: compliance_manager_or_above
+        rationale: |
+          Critical-rating elevations have material downstream consequences
+          (filing obligations, transaction-monitoring threshold changes, possible
+          customer-relationship-termination workflows). Dual approval enforces
+          segregation-of-duties at the platform level.
+
+  DismissSanctionsHit:
+    authorization_level: senior_compliance_analyst
+    dual_approval_required: true
+    dual_approver_role: compliance_manager_or_above
+    rationale: |
+      A dismissed sanctions hit that turns out to be a true positive is one of
+      the most consequential audit findings possible. Dual approval is the
+      minimum defensible control posture.
+
+  EscalateToEDD:
+    authorization_level: analyst
+    dual_approval_required: false
+    rationale: |
+      Escalating to enhanced due diligence is a conservative direction; single
+      authorization is sufficient. The de-escalation case (TerminateEDD) is the
+      one requiring dual approval.
+
+  TerminateEDD:
+    authorization_level: senior_analyst
+    dual_approval_required: true
+    dual_approver_role: compliance_manager_or_above
+
+  ChangeBeneficialOwner:
+    authorization_level: senior_analyst
+    dual_approval_required: true
+    dual_approver_role: kyc_team_lead_or_above
+    rationale: |
+      Beneficial-ownership data drives SAR / CTR filing decisions and informs
+      sanctions screening. Changes require the same dual-approval rigor as
+      critical-rating elevations.
+
+# Segregation-of-duties enforcement
+segregation_of_duties:
+  rules:
+    - rule: actor and approver MUST be different user_ids on any dual-approval action
+      enforcement: platform-level, at Action submission time
+    - rule: any user with platform-administrator role is EXCLUDED from acting as
+            approver on AuditEntries that pertain to their own administrative changes
+      enforcement: institution-level RBAC configuration (Foundry does not enforce
+                   role-self-exclusion natively; the deployment config must)

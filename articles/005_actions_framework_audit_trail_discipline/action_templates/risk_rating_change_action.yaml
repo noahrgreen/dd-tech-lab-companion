@@ -1,7 +1,123 @@
-action: ElevateRiskRating
-fields:
-  - counterparty_id
-  - prior_rating
-  - new_rating
-  - justification
-  - supporting_evidence_object_set
+# ElevateRiskRating ActionType — Foundry Actions Framework
+#
+# Companion artifact for Foundry Article 005. Describes how the institution
+# implements a regulator-defensible state-change primitive on top of the
+# Counterparty ontology object.
+#
+# IMPORTANT: This template gives the institution the PRIMITIVES to build an
+# audit trail consistent with SR 11-7 / SOX §404 / FFIEC BSA/AML / OCC 2011-12
+# documentation expectations. It does NOT, by itself, satisfy any specific
+# regulator's requirements. The institution's overall control environment —
+# including the bypass-control discipline addressed in bypass_controls/ — is
+# what determines examiner readiness.
+
+ActionType: ElevateRiskRating
+target_object: Counterparty
+authorization_level: senior_analyst_or_above
+authorization_check: RBAC role evaluated at execution time; institution-specific
+                     role mapping lives in the deployment configuration
+
+required_inputs:
+  new_risk_rating:
+    type: enum
+    allowed_values: [medium, high, critical]
+    constraint: must be strictly higher than current Counterparty.risk_rating
+    constraint_check: enforced at Action submission; the editor surfaces a
+                      validation error if the input violates the constraint
+
+  justification:
+    type: text
+    min_length: 200_characters
+    rationale: |
+      Examiner expectation under SR 11-7 §V is that the documented justification
+      for a model-impacting decision is materially specific. 200 characters is a
+      floor, not a target; substantive justifications typically run 400-800.
+
+  supporting_evidence:
+    type: ObjectSet
+    constraint: must contain at least one of the following ontology object types
+    allowed_types:
+      - AdverseMediaMention
+      - SanctionsHit
+      - TransactionAnomaly
+      - InternalEscalationNote
+    constraint_check: enforced at submission; empty ObjectSet rejected
+    rationale: |
+      FFIEC BSA/AML examination manual expects that risk-rating elevations
+      tie to specific, identifiable evidence — not just analyst judgment.
+      The ObjectSet constraint enforces this at the platform level.
+
+  dual_approval_required:
+    type: boolean
+    derived: |
+      auto-computed: true if new_risk_rating == "critical"; otherwise false
+    rationale: |
+      Segregation-of-duties pattern. Critical-rating elevations require both
+      the executing senior analyst AND a compliance-team approver before the
+      side_effects fire. The institution maps "compliance-team approver" to a
+      specific RBAC role in deployment config.
+
+side_effects:
+  - update:
+      object: Counterparty
+      field: risk_rating
+      new_value: new_risk_rating
+  - update:
+      object: Counterparty
+      field: last_risk_change_timestamp
+      new_value: current_timestamp
+  - create:
+      object_type: AuditEntry
+      fields:
+        action_type: ElevateRiskRating
+        action_id: auto_generated_uuid
+        actor: current_user.user_id
+        actor_role: current_user.role_at_execution
+        approver: current_dual_approver.user_id  # null if dual_approval_required = false
+        approver_role: current_dual_approver.role  # null otherwise
+        timestamp: current_timestamp
+        target_object_id: Counterparty.counterparty_id
+        prior_state:
+          risk_rating: Counterparty.risk_rating  # value BEFORE the update side_effect
+        new_state:
+          risk_rating: new_risk_rating
+        justification: justification
+        supporting_evidence_ids: supporting_evidence.ids
+        supporting_evidence_snapshot_uri: snapshot_at_execution(supporting_evidence)
+        immutable: true
+        retention_policy: regulatory_7_year_minimum
+
+post_execution:
+  - condition: new_risk_rating == "critical"
+    action: notify
+    target: compliance_committee_distribution_list
+    message_template: |
+      Counterparty {Counterparty.legal_name} ({Counterparty.counterparty_id})
+      elevated to CRITICAL by {actor} ({actor_role}), approved by {approver}
+      ({approver_role}) at {timestamp}. Evidence: {n_evidence_objects} items.
+      Justification length: {len(justification)} characters. AuditEntry:
+      {action_id}.
+
+  - condition: any(e.object_type == "SanctionsHit" for e in supporting_evidence)
+    action: queue_for_review
+    queue: regulatory_filing_review
+    sla_business_days: 1
+    rationale: |
+      Sanctions-related rating elevations may trigger SAR / regulatory-filing
+      obligations under FFIEC BSA/AML expectations. Routing to the filing
+      queue with a 1-business-day SLA ensures the institution evaluates the
+      filing obligation before the elevation propagates downstream.
+
+# IMPORTANT — BYPASS CONTROL NOTE
+#
+# This ActionType is the SANCTIONED path for elevating a Counterparty's risk
+# rating. The institution must separately address the following BYPASS paths:
+#
+#   - Direct dataset edits via Pipeline Builder or Code Repos
+#   - Admin overrides via platform-administrator role
+#   - Transform redeployments that change risk_rating via batch logic
+#   - Emergency backfills via operations-team escalation
+#
+# Each bypass path requires its own audit treatment. See bypass_controls/
+# in this bundle for the recommended controls. The platform provides the
+# primitive; the institution provides the discipline.

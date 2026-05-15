@@ -1,0 +1,147 @@
+# Bypass Audit Controls — Foundry Article 005 companion
+#
+# The Actions framework is the SANCTIONED path for state changes. This file
+# enumerates the BYPASS paths that exist in any Foundry deployment and the
+# controls the institution must implement separately to keep examiner
+# readiness intact.
+#
+# The platform provides the primitive (Actions framework); the institution
+# provides the discipline (these bypass controls). Either alone is
+# insufficient.
+
+bypass_paths:
+  - id: direct_dataset_edit
+    description: |
+      Pipeline Builder, Code Repos, or Quiver SQL UPDATE statements can modify
+      ontology-backing dataset rows without firing any ActionType. The
+      Counterparty.risk_rating field is "changed" but no AuditEntry is created.
+    examiner_risk: high
+    recommended_controls:
+      - rule: |
+          The dataset(s) backing every regulated ontology object class
+          (Counterparty, AuditEntry, AdverseMediaMention, SanctionsHit) are
+          MARKED read-only at the Pipeline/Code Repo level for all roles
+          except platform-administrator and a dedicated etl-ops role.
+      - rule: |
+          The etl-ops role's dataset writes are routed through a transform that
+          BY DESIGN cannot modify regulated ontology object fields. Schema
+          enforcement at write time, validated by CI gate.
+      - rule: |
+          Platform-administrator role is granted only via the
+          break-glass-emergency-access workflow. Every break-glass access
+          generates a HighPrivilegeAccessEntry that itself is an immutable
+          AuditEntry subtype.
+    detection: |
+      Query 10 in examiner_ready_query_templates.md (action-vs-bypass
+      reconciliation) catches the cases where bypass actually occurred. Run
+      continuously, not just on examiner request.
+
+  - id: admin_override
+    description: |
+      Platform administrators can edit any field of any object directly via
+      the Foundry admin console or the Compass admin API.
+    examiner_risk: high
+    recommended_controls:
+      - rule: |
+          Platform-administrator role is granted only via the
+          break-glass-emergency-access workflow (see direct_dataset_edit).
+      - rule: |
+          Every admin-console action is logged to the institutional SIEM in
+          ADDITION to Foundry's native audit log. The SIEM log is the
+          examiner-defense layer; do not rely on Foundry's native
+          admin-action-log alone.
+      - rule: |
+          Admin-console access requires step-up authentication (hardware token
+          or equivalent), not the same SSO that grants normal-user access.
+      - rule: |
+          The platform-administrator's actions on REGULATED ontology objects
+          must include a written break-glass justification logged at the time
+          of action, NOT retroactively.
+
+  - id: transform_redeployment
+    description: |
+      A transform that builds the Counterparty ontology dataset can be edited
+      and redeployed. The new transform logic might change risk_rating values
+      for batches of Counterparties in a single execution, with no per-
+      counterparty AuditEntry.
+    examiner_risk: medium-high
+    recommended_controls:
+      - rule: |
+          Transforms that write to regulated ontology object datasets are
+          marked PRODUCTION-LOCKED. Changes require a documented change-
+          management ticket linked to a TransformChangeEntry (its own
+          immutable AuditEntry subtype).
+      - rule: |
+          Every TransformChangeEntry captures the prior transform commit hash,
+          the new transform commit hash, the change owner, the approver
+          (dual-approval required for regulated-object writers), and a
+          materiality assessment of expected affected rows.
+      - rule: |
+          Post-redeployment, a reconciliation report compares aggregate
+          regulated-field distributions before/after. Material drift triggers
+          an internal-audit ticket.
+
+  - id: emergency_backfill
+    description: |
+      Operations team performs a one-off batch fix to correct data quality
+      issues (e.g., a feed error that caused 200 Counterparties to be flagged
+      as risk_rating=critical incorrectly).
+    examiner_risk: medium
+    recommended_controls:
+      - rule: |
+          Emergency backfills require a documented Operations Incident ticket
+          linked to a BackfillEntry (its own immutable AuditEntry subtype).
+      - rule: |
+          The BackfillEntry must include: incident_ticket_id, root cause,
+          rows affected, prior values (snapshotted), new values, approver
+          (dual-approval required), and the analyst-side accountability
+          owner who reviewed the change.
+      - rule: |
+          Backfills affecting more than 50 regulated ontology objects require
+          compliance committee notification within 1 business day.
+
+  - id: api_direct_write
+    description: |
+      Integration partners with API credentials can write to ontology
+      datasets via the Compass API or Foundry SDK.
+    examiner_risk: medium
+    recommended_controls:
+      - rule: |
+          API credentials writing to regulated ontology object datasets are
+          restricted to specific service accounts; no broad institutional API
+          credentials grant access.
+      - rule: |
+          Service accounts log every regulated-object write to the
+          institutional SIEM with the requesting agent's identity (not just
+          the service account).
+      - rule: |
+          API writes to regulated ontology objects require explicit
+          allowlist enrollment per integration partner; default-deny.
+
+  - id: ontology_object_undelete
+    description: |
+      A previously-soft-deleted ontology object can be undeleted, which
+      effectively reverts state without firing an ActionType.
+    examiner_risk: low-medium
+    recommended_controls:
+      - rule: |
+          Undelete operations on regulated ontology objects require senior_analyst
+          authorization + a written justification logged as an
+          ObjectRestoreEntry (immutable AuditEntry subtype).
+      - rule: |
+          The ObjectRestoreEntry captures the time of original soft-delete, the
+          actor who soft-deleted, the time of restore, the actor who restored,
+          and the supporting justification.
+
+# Examiner-readiness self-assessment
+#
+# Once a quarter, run query 10 (action-vs-bypass reconciliation) across a
+# 90-day window covering EVERY regulated ontology object class. Expected
+# result: zero unexpected bypass rows. Any unexpected bypass row is an
+# internal-audit finding to remediate before the next examiner cycle.
+quarterly_self_assessment:
+  required: true
+  cadence: every_calendar_quarter
+  scope: every regulated ontology object class
+  expected_unexpected_bypass_count: 0
+  remediation_owner: chief_compliance_officer

@@ -1,0 +1,28 @@
+{
+  "action_id": "a1f7c3d4-9b22-4e58-a3c1-7f2a8d6e4901",
+  "action_type": "ElevateRiskRating",
+  "actor": "analyst.kowalski",
+  "actor_role": "senior_analyst",
+  "approver": null,
+  "approver_role": null,
+  "timestamp": "2026-05-15T15:42:18+00:00",
+  "target_object_id": "CP-SYNTH-00042",
+  "prior_state": {
+    "risk_rating": "B+"
+  },
+  "new_state": {
+    "risk_rating": "high"
+  },
+  "justification": "Elevation from B+ to high based on aggregate adverse-media review (AIP summary action_id ams-2026-05-15-CP-SYNTH-00042). Three open signals concentrated in 90-day window: civil complaint at pleadings stage (AM-003), highest individual count on the Q1 regulator named-firms list (AM-004), and unaddressed disclosure pattern in Q1 revenue announcement (AM-002 vs AM-001/AM-003). The complaint and the regulator-named pattern together warrant elevation; the disclosure gap reinforces the elevation but is not by itself sufficient. Not elevated to critical given absence of enforcement-action trigger and pleadings stage of the civil matter. Will re-review at the 2026-Q3 portfolio cycle or earlier if either matter escalates substantively.",
+  "supporting_evidence_ids": [
+    "AM-001",
+    "AM-002",
+    "AM-003",
+    "AM-004",
+    "ams-2026-05-15-CP-SYNTH-00042"
+  ],
+  "supporting_evidence_snapshot_uri": "foundry://snapshots/2026-05-15/CP-SYNTH-00042/evidence_bundle.json",
+  "immutable": true,
+  "superseded_by": null,
+  "retention_policy": "regulatory_7_year_minimum"
+}

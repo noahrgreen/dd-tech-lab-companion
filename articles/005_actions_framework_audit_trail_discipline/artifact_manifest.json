@@ -1,8 +1,25 @@
 {
   "article_no": "005",
-  "title": "Foundry Actions Framework for Audit-Trail Discipline \u2014 Risk-Rating Changes, Regulatory Documentation, and the Examiner-Ready Audit Log",
+  "title": "Foundry Actions Framework for Audit-Trail Discipline — Risk-Rating Changes, Regulatory Documentation, and the Examiner-Ready Audit Log",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/005_actions-framework-audit-trail-discipline_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "ElevateRiskRating ActionType YAML matches seed specification: target_object, authorization_level, required_inputs with constraint expressions, side_effects, post_execution hooks.",
+    "AuditEntry JSON Schema (draft 2020-12) covers every field the article walks; immutable=true is constant constraint.",
+    "10 examiner-ready query templates including the action-vs-bypass reconciliation query (catches the bypass-control gap continuously).",
+    "6 bypass paths enumerated with recommended controls and quarterly self-assessment requirement.",
+    "Retention + approvals matrix with 7-year regulatory floors (FFIEC BSA/AML, SOX §404, SR 11-7 §V, FinCEN, OFAC) and segregation-of-duties enforcement rules.",
+    "Regulatory mapping covers 6 regulations (SR 11-7, OCC 2011-12, SOX §404, FFIEC BSA/AML, FinCEN 31 CFR §1010.230, PCAOB AS 2201) with separation of Foundry contribution from institution responsibility.",
+    "Worked example AuditEntry validates against schema; cross-references Article 004's AIP summary output via supporting_evidence_ids (demonstrates 004 → 005 handoff)."
+  ],
+  "known_limits": [
+    "Portable companion bundle; no live Foundry runtime executes the ActionType.",
+    "Institution's overall control environment, bypass-control implementation, ongoing-monitoring cadence, analyst training, control testing, and SAR-filing workflow integration are out-of-scope.",
+    "RBAC role names are generic (senior_analyst, compliance_manager); institution-specific mapping lives in deployment config.",
+    "Regulatory citations accurate as of 2026-05-15; regulators update guidance.",
+    "Justification text quality (not just 200-char length) is institution-side training discipline, not a platform-enforceable constraint."
+  ],
+  "framing_discipline": "Foundry Actions framework provides the PRIMITIVES the institution uses to build an audit-trail discipline consistent with regulatory expectations. It does NOT by itself satisfy any specific regulator's requirements. The bypass-control discipline (bypass_controls/) and the institution's overall control environment determine examiner readiness.",
+  "prepared_by": "Noah Green CPA CFE"
 }

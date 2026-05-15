@@ -1,0 +1,141 @@
+# Regulatory Mapping — Foundry Article 005 companion
+#
+# Maps each AuditEntry / ActionType artifact to the specific regulatory
+# citation it helps the institution satisfy. The framing is deliberately
+# "helps satisfy" — not "satisfies out of the box." The institution's overall
+# control environment is what determines examiner readiness; this mapping
+# documents the platform's contribution.
+
+mappings:
+  - regulation: SR 11-7
+    full_citation: |
+      Federal Reserve, "Supervisory Guidance on Model Risk Management" (SR 11-7,
+      issued April 4, 2011, jointly with OCC Bulletin 2011-12)
+    section: V — Documentation
+    expectation_summary: |
+      "Model risk management documentation must be sufficient to allow parties
+      unfamiliar with the model to understand how the model operates, its
+      limitations, and key assumptions."
+    foundry_contribution:
+      - AuditEntry.action_type captures the decision class
+      - AuditEntry.actor + actor_role + timestamp captures the analyst lineage
+      - AuditEntry.justification (200-char floor) captures the rationale
+      - AuditEntry.supporting_evidence_ids captures the evidence linkage
+      - retention_policy enforces the 7-year minimum
+    institution_responsibility:
+      - Model documentation per §V is broader than the per-decision audit trail;
+        the institution must separately maintain model-validation documentation,
+        model-development documentation, and ongoing-monitoring documentation.
+      - The justification text quality (not just length) is examined; the
+        institution must train analysts on substantive justification standards.
+
+  - regulation: OCC Bulletin 2011-12
+    full_citation: |
+      Office of the Comptroller of the Currency, "Sound Practices for Model
+      Risk Management" (Bulletin 2011-12, joint with SR 11-7)
+    section: V — Documentation
+    expectation_summary: |
+      Same as SR 11-7 §V — joint issuance.
+    foundry_contribution: (same as SR 11-7)
+    institution_responsibility: (same as SR 11-7)
+
+  - regulation: SOX §404
+    full_citation: |
+      Sarbanes-Oxley Act of 2002, §404 (Management Assessment of Internal Controls)
+    related_pcaob_standard: PCAOB AS 2201 (An Audit of Internal Control Over
+                            Financial Reporting Integrated with Audit of Financial Statements)
+    expectation_summary: |
+      Internal controls over financial reporting must be documented, tested,
+      and reported on annually. Material weaknesses must be disclosed.
+    foundry_contribution:
+      - AuditEntry.immutable = true satisfies the integrity-of-audit-evidence
+        expectation
+      - AuditEntry retention of 7 years exceeds the PCAOB-typical 5-year retention
+      - examiner_ready_query_templates.md queries 1-5 provide the standard
+        control-testing evidence on demand
+    institution_responsibility:
+      - The institution must annually test the operating effectiveness of the
+        ActionType controls — sample AuditEntries, verify segregation-of-duties,
+        verify justification adequacy.
+      - Bypass controls (see bypass_controls/) are themselves SOX §404 controls
+        that require independent testing.
+
+  - regulation: FFIEC BSA/AML Examination Manual
+    full_citation: |
+      FFIEC BSA/AML Examination Manual (updated periodically), CDD/EDD sections
+    relevant_subsections:
+      - Customer Due Diligence
+      - Enhanced Due Diligence
+      - SAR reporting workflows
+    expectation_summary: |
+      KYC documentation must capture the institution's risk-based determinations,
+      the supporting evidence, and the decision authority for each customer.
+    foundry_contribution:
+      - ElevateRiskRating ActionType + supporting_evidence ObjectSet constraint
+        enforces the "risk determination must tie to evidence" expectation
+      - DismissSanctionsHit ActionType with dual_approval + sanctions-specific
+        retention enforces the FinCEN/OFAC evidentiary discipline
+      - EscalateToEDD / TerminateEDD actions capture the EDD lifecycle
+    institution_responsibility:
+      - The mapping from FFIEC risk tiers to the institution's risk_rating enum
+        is institution-specific; the institution must document its own crosswalk.
+      - SAR-filing triggers driven by AuditEntries (e.g., critical-rating
+        elevation + sanctions-hit-related evidence) must connect to the
+        institution's actual SAR-filing workflow; the post_execution hook is
+        the platform-side wiring but the FinCEN-facing filing is institution-side.
+
+  - regulation: FinCEN Customer Due Diligence Rule
+    full_citation: |
+      FinCEN Customer Due Diligence Requirements for Financial Institutions
+      (31 CFR §1010.230, effective May 11, 2018)
+    expectation_summary: |
+      Financial institutions must collect and verify beneficial-ownership
+      information for legal entity customers, develop customer risk profiles,
+      and conduct ongoing monitoring.
+    foundry_contribution:
+      - ChangeBeneficialOwner ActionType (with dual_approval) captures the
+        beneficial-ownership state-change discipline
+      - ongoing-monitoring AuditEntries (periodic re-risk-rating actions)
+        capture the §1010.230(b)(5) ongoing-monitoring expectation
+    institution_responsibility:
+      - Beneficial-owner identity verification is process-level; the
+        ActionType captures the institution's recorded determination but the
+        verification itself happens upstream.
+
+  - regulation: PCAOB AS 2201
+    full_citation: |
+      PCAOB Auditing Standard 2201 — An Audit of Internal Control Over Financial
+      Reporting That Is Integrated with An Audit of Financial Statements
+    relevant_subsection: ¶34 (auditor evaluation of internal controls)
+    expectation_summary: |
+      External auditor evaluates the design and operating effectiveness of
+      internal controls over financial reporting.
+    foundry_contribution:
+      - AuditEntries provide the populations from which the external auditor
+        samples for substantive testing
+      - examiner_ready_query_templates.md queries 6-7 (data-quality screening)
+        match what auditors typically request to validate control completeness
+    institution_responsibility:
+      - The external auditor's sampling methodology is auditor-side; this
+        bundle provides the queryable population, not the sampling judgment.
+
+# Cross-cutting institution responsibilities (not framework-specific)
+cross_cutting_responsibilities:
+  - id: control_environment
+    description: |
+      Foundry Actions framework is a control mechanism. The broader control
+      environment — tone at the top, risk-management governance, segregation
+      of duties beyond the platform, training, supervision — is the
+      institution's responsibility. No platform substitutes for it.
+  - id: ongoing_monitoring
+    description: |
+      The expectation that risk ratings are revisited periodically (not just
+      on adverse-media trigger) is a workflow design choice. The institution
+      must implement the periodic-review cadence; the platform records the
+      review action when it fires.
+  - id: bypass_control_discipline
+    description: |
+      Every bypass path in bypass_controls/ requires its own control. The
+      ActionType is not the only platform-level write path; bypasses exist
+      by design (admin maintenance, emergency backfill, etc.) and must be
+      controlled separately.
