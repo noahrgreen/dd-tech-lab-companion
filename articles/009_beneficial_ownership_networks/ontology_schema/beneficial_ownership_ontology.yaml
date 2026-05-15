@@ -1,12 +1,38 @@
 object_types:
   Person:
     primary_key: person_id
+    properties:
+      legal_name_canonical: string
+      legal_name_variants: array<string>
+      date_of_birth: date
+      nationality: array<country_code>
+      pep_status: enum[none, domestic, foreign, international_org]
+      sanctions_screening_state: enum[clear, hit, under_review]
+      last_kyc_refresh: timestamp
   Entity:
     primary_key: entity_id
+    properties:
+      legal_name: string
+      jurisdiction_of_incorporation: country_code
+      entity_type: enum[corporation, llc, partnership, trust, foundation]
+      incorporation_date: date
+      dissolution_date: date | null
   Jurisdiction:
     primary_key: country_code
+    properties:
+      disclosure_regime: enum[realtime_public, annual_public, on_request, opaque]
+      fincen_boi_equivalent: boolean
+      risk_classification: enum[low, medium, high, fatf_blacklist]
 link_types:
   OWNS:
-    properties: [ownership_percentage, effective_from, effective_to, disclosure_source]
-  IS_OFFICER_OF:
-    properties: [role_title, effective_from, effective_to]
+    source: Person | Entity
+    target: Entity
+    properties: [ownership_percentage, ownership_type, effective_from, effective_to, disclosure_source, disclosure_date]
+  OFFICER_OF:
+    source: Person
+    target: Entity
+    properties: [role, effective_from, effective_to, disclosure_source]
+  REGISTERED_IN:
+    source: Entity
+    target: Jurisdiction
+    properties: [registration_date, registration_number]

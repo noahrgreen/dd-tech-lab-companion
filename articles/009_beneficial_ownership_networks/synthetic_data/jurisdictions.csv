@@ -1,0 +1,6 @@
+country_code,disclosure_regime,fincen_boi_equivalent,risk_classification
+US,realtime_public,True,medium
+GB,annual_public,False,low
+DE,annual_public,False,low
+KY,on_request,False,high
+VG,opaque,False,high

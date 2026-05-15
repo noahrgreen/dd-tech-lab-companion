@@ -2,7 +2,15 @@
   "article_no": "009",
   "title": "Foundry Ontology Design for Beneficial-Ownership Networks \u2014 Person, Entity, Officer, and Jurisdiction Modeling at Bank-Group Scale",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/009_ontology-beneficial-ownership-networks_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "Ontology schema covers Person, Entity, Jurisdiction, OWNS, OFFICER_OF, and REGISTERED_IN with temporal properties.",
+    "Synthetic data set includes 200 entities and multi-jurisdiction disclosure metadata.",
+    "Cypher queries include as-of-date beneficial-ownership traversal and provenance inspection."
+  ],
+  "known_limits": [
+    "Synthetic data is deterministic and illustrative, not regulatory-source-derived.",
+    "BOI rule references are structural only; live compliance status must still be checked at publication time."
+  ]
 }

@@ -2,7 +2,15 @@
   "article_no": "003",
   "title": "Workshop Application Patterns for Counterparty Risk Investigators \u2014 Single-Pane-of-Glass Investigator Workflows",
   "series": "Palantir Foundry for Due Diligence",
-  "status": "starter_bundle",
+  "status": "validated_bundle",
   "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/003_workshop-application-patterns-investigators_seed_DRAFT_v1_2026-05-11.md",
-  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+  "validation_scope": [
+    "Workshop layout mirrors the seed pseudocode structure and CTA framing.",
+    "Synthetic dataset contains 5,000 counterparties with deterministic risk and relationship surfaces.",
+    "Actions enforce required evidence fields and explicit audit-trail routing."
+  ],
+  "known_limits": [
+    "This is a portable YAML/CSV companion, not a live Foundry export.",
+    "AIP summaries are represented as grounded text fields rather than executable AIP prompts."
+  ]
 }

@@ -1,0 +1,13 @@
+jurisdiction_harmonization:
+  precedence_order:
+    - fincen_boi
+    - uk_psc
+    - eu_ubo
+    - voluntary_disclosure
+    - opencorporates
+  conflict_resolution:
+    ownership_percentage: prefer_latest_disclosure_date
+    substantial_control: preserve_all_positive assertions
+    legal_name_variants: append_and_canonicalize
+  temporal_policy:
+    overlapping_ownership_links: retain_all_and_query_as_of_date

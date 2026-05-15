@@ -4,13 +4,13 @@
 |--------|-------|-----------|
 | **Foundry 001** | Foundry Ontology Design for Counterparty Risk Investigations | [ontology_schema](articles/001_foundry_ontology_counterparty_risk/ontology_schema/) · [synthetic_data](articles/001_foundry_ontology_counterparty_risk/synthetic_data/) · [foundry_sdk_stubs](articles/001_foundry_ontology_counterparty_risk/foundry_sdk_stubs/) · [workshop_module](articles/001_foundry_ontology_counterparty_risk/workshop_module/) · [action_templates](articles/001_foundry_ontology_counterparty_risk/action_templates/) |
 | **Foundry 002** | Pipeline Builder for DD Data Ingestion | [bundle](articles/002_pipeline_builder_dd_data_ingestion/) |
-| **Foundry 003** | Workshop Application Patterns for Counterparty Risk Investigators | [starter bundle](articles/003_workshop_application_patterns_investigators/) |
+| **Foundry 003** | Workshop Application Patterns for Counterparty Risk Investigators | [validated bundle](articles/003_workshop_application_patterns_investigators/) |
 | **Foundry 004** | AIP-Driven Adverse-Media Summarization for DD Engagements | [starter bundle](articles/004_aip_adverse_media_summarization/) |
 | **Foundry 005** | Foundry Actions Framework for Audit-Trail Discipline | [starter bundle](articles/005_actions_framework_audit_trail_discipline/) |
 | **Foundry 006** | Code Repositories in Foundry | [starter bundle](articles/006_code_repositories_python_pyspark/) |
 | **Foundry 007** | Quiver for Ad-Hoc Counterparty Queries | [starter bundle](articles/007_quiver_ad_hoc_counterparty_queries/) |
 | **Foundry 008** | Time Series in Foundry | [starter bundle](articles/008_time_series_counterparty_risk_trajectories/) |
-| **Foundry 009** | Foundry Ontology Design for Beneficial-Ownership Networks | [starter bundle](articles/009_beneficial_ownership_networks/) |
+| **Foundry 009** | Foundry Ontology Design for Beneficial-Ownership Networks | [validated bundle](articles/009_beneficial_ownership_networks/) |
 | **Foundry 010** | Foundry vs Snowflake + DBT vs Databricks for DD Analytics | [starter bundle](articles/010_platform_tradeoff_framework/) |
 | **Knowledge Graphs 001** | Beneficial-Ownership Lists to Cypher | [bundle](articles/knowledge_graphs_001_beneficial_ownership_cypher/) · [root csv](ownership_synthetic.csv) |
 | **Stochastic 002** | Modeling Journal-Entry Sequences in Production | [bundle](articles/stochastic_002_journal_entry_sequences/) · [script](stochastic_markov/companion_artifacts/002_journal_entry_production.py) |

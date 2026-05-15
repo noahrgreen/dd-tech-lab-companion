@@ -1,5 +1,19 @@
 actions:
   - name: ElevateRiskRating
+    visible_when: risk_rating in [low, medium]
     required_fields: [justification, supporting_evidence_object_set]
+    writes:
+      target_object: Counterparty
+      field: risk_rating
+    audit_trail:
+      framework: Actions
+      required_metadata: [actor, timestamp, prior_value, new_value, evidence_object_set]
   - name: InitiateEnhancedDueDiligence
-    required_fields: [reason, linked_counterparty]
+    visible_when: any_section_flagged
+    required_fields: [reason, linked_counterparty, supporting_evidence_object_set]
+    creates:
+      object_type: EDDEngagement
+      links_to: Counterparty
+    audit_trail:
+      framework: Actions
+      required_metadata: [actor, timestamp, reason, linked_counterparty]
