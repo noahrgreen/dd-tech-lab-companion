@@ -1,0 +1,9 @@
+{
+  "article_no": "007",
+  "title": "Round-Number Bias and Threshold Avoidance in Excel",
+  "series": "Excel Fraud Analytics",
+  "status": "starter_bundle",
+  "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/excel_fraud/seeds/007_round-number-bias-threshold-avoidance_seed_DRAFT_v1_2026-05-13.md",
+  "workbook_path": "workbooks/007-round-number-bias-threshold-avoidance.xlsx",
+  "quality_standard": "Workbook starter scaffold only; formulas, examples, and assertions must be finalized against the canonical article before public linking."
+}

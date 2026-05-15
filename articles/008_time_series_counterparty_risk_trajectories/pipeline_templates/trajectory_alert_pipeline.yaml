@@ -1,0 +1,6 @@
+inputs:
+  - counterparty_monthly_features
+transforms:
+  - compute_zscores
+  - threshold_breach_flags
+  - emit_alert_objects

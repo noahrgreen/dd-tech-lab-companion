@@ -1,0 +1,8 @@
+{
+  "article_no": "006",
+  "title": "Code Repositories in Foundry \u2014 When to Embed Python / PySpark in the Pipeline (and When to Stay in Pipeline Builder)",
+  "series": "Palantir Foundry for Due Diligence",
+  "status": "starter_bundle",
+  "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/006_code-repositories-python-pyspark_seed_DRAFT_v1_2026-05-11.md",
+  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+}

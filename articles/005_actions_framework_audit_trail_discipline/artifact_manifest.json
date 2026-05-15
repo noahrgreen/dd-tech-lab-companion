@@ -1,0 +1,8 @@
+{
+  "article_no": "005",
+  "title": "Foundry Actions Framework for Audit-Trail Discipline \u2014 Risk-Rating Changes, Regulatory Documentation, and the Examiner-Ready Audit Log",
+  "series": "Palantir Foundry for Due Diligence",
+  "status": "starter_bundle",
+  "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/005_actions-framework-audit-trail-discipline_seed_DRAFT_v1_2026-05-11.md",
+  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+}

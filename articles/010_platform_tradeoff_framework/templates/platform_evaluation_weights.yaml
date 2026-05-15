@@ -1,0 +1,9 @@
+weights:
+  ontology_layer: 0.20
+  investigator_ui: 0.15
+  pipeline_transforms: 0.15
+  llm_integration: 0.10
+  audit_trail: 0.15
+  cost_model: 0.10
+  skill_alignment: 0.10
+  vendor_lock_in: 0.05

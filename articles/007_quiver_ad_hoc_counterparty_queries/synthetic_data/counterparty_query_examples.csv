@@ -1,0 +1,3 @@
+query_name,input,expected_shape
+exposure_to_issuer,issuer_name,counterparty list with exposure path
+sanctions_overlap,sanctions_entity,counterparties + shared owner

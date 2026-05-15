@@ -1,0 +1,10 @@
+module: counterparty_risk_investigation
+layout: split_pane
+primary_sections:
+  - header
+  - summary
+  - relationships
+secondary_sections:
+  - transaction_volume_time_series_chart
+  - ownership_graph_visualization
+  - sanctions_list_full_text

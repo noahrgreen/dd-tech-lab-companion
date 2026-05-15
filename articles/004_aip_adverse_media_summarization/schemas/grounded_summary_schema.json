@@ -1,0 +1,12 @@
+{
+  "summary": "string",
+  "citations": [
+    {
+      "source_id": "string",
+      "claim": "string"
+    }
+  ],
+  "risk_flags": [
+    "string"
+  ]
+}

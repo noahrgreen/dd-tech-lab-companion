@@ -1,0 +1,8 @@
+{
+  "article_no": "003",
+  "title": "Workshop Application Patterns for Counterparty Risk Investigators \u2014 Single-Pane-of-Glass Investigator Workflows",
+  "series": "Palantir Foundry for Due Diligence",
+  "status": "starter_bundle",
+  "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/003_workshop-application-patterns-investigators_seed_DRAFT_v1_2026-05-11.md",
+  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+}

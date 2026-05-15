@@ -1,0 +1,5 @@
+records:
+  risk_decision_log: 7_years
+  supporting_evidence_snapshot: 7_years
+approvals:
+  critical_rating_change: compliance_manager

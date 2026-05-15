@@ -1,0 +1,4 @@
+dimension,foundry,snowflake_dbt,databricks
+ontology_layer,built_in,build_yourself,partial
+investigator_ui,Workshop,custom_app,Lakeview_partial
+audit_trail,Actions,custom,custom

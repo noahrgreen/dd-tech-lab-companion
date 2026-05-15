@@ -1,0 +1,5 @@
+actions:
+  - name: ElevateRiskRating
+    required_fields: [justification, supporting_evidence_object_set]
+  - name: InitiateEnhancedDueDiligence
+    required_fields: [reason, linked_counterparty]

@@ -1,0 +1,12 @@
+object_types:
+  Person:
+    primary_key: person_id
+  Entity:
+    primary_key: entity_id
+  Jurisdiction:
+    primary_key: country_code
+link_types:
+  OWNS:
+    properties: [ownership_percentage, effective_from, effective_to, disclosure_source]
+  IS_OFFICER_OF:
+    properties: [role_title, effective_from, effective_to]

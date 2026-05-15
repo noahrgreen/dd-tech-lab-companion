@@ -1,0 +1,8 @@
+{
+  "article_no": "010",
+  "title": "Foundry vs Snowflake + DBT vs Databricks for DD Analytics \u2014 Architecture Trade-Off Framework",
+  "series": "Palantir Foundry for Due Diligence",
+  "status": "starter_bundle",
+  "source_seed": "/Users/noahgreen/NGO/outbox/owner_review/dd_tech_lab_kickoff_2026-05-10/palantir_foundry/seeds/010_foundry-vs-snowflake-dbt-databricks_seed_DRAFT_v1_2026-05-11.md",
+  "quality_standard": "Parseable starter artifacts aligned to the article seed; replace stubs with production-grade companions once article draft is finalized."
+}

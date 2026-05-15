@@ -1,0 +1,4 @@
+criterion,pipeline_builder,code_repo
+simple schema mapping,preferred,not needed
+multi-source custom matching,limited,preferred
+PySpark dependency required,unsupported,required

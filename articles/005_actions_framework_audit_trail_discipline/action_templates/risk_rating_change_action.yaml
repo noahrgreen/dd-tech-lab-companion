@@ -1,0 +1,7 @@
+action: ElevateRiskRating
+fields:
+  - counterparty_id
+  - prior_rating
+  - new_rating
+  - justification
+  - supporting_evidence_object_set

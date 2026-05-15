@@ -1,0 +1,5 @@
+features:
+  - monthly_txn_volume_change_pct
+  - sanctions_screening_hits_rolling_90d
+  - adverse_media_mentions_rolling_30d
+  - risk_rating_change_count_rolling_180d

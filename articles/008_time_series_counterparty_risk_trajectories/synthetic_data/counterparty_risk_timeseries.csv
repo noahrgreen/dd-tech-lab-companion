@@ -1,0 +1,4 @@
+counterparty_id,month,risk_score,adverse_media_count,sanctions_hits
+CP-SYN-008,2026-01,42,0,0
+CP-SYN-008,2026-02,47,1,0
+CP-SYN-008,2026-03,61,2,1

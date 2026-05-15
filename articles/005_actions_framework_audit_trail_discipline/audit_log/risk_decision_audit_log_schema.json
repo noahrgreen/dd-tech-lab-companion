@@ -1,0 +1,11 @@
+{
+  "action_id": "string",
+  "counterparty_id": "string",
+  "actor": "string",
+  "timestamp": "iso8601",
+  "old_value": "string",
+  "new_value": "string",
+  "evidence_ids": [
+    "string"
+  ]
+}

@@ -4,7 +4,7 @@
 Reproducible artifacts accompanying the **DD Tech Lab** publication series at sheepdogprosperitypartners.com.
 
 **Maintainer:** Noah Green CPA CFE
-**Repository status:** Expanded release through Foundry, Knowledge Graphs / Neo4j, Stochastic / Markov, and Excel-fraud published companions (2026-05-14)
+**Repository status:** Expanded release through Foundry 010 and Excel 010 starter bundles, plus published Foundry, Knowledge Graphs / Neo4j, Stochastic / Markov, and Excel-fraud companions (2026-05-14)
 **License:** MIT (see LICENSE — pending finalization; until then, artifacts may be downloaded and used for educational and practitioner-internal purposes)
 
 ---

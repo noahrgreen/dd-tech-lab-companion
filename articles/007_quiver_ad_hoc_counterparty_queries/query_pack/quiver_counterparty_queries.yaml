@@ -1,0 +1,5 @@
+queries:
+  - name: exposure_to_issuer
+    prompt: Which counterparties have direct or indirect exposure to issuer X?
+  - name: sanctions_overlap
+    prompt: Which counterparties share a beneficial owner with any active sanctions hit?
