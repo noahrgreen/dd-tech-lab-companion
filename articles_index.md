@@ -9,7 +9,7 @@
 | **Foundry 005** | Foundry Actions Framework for Audit-Trail Discipline | [validated bundle](articles/005_actions_framework_audit_trail_discipline/) |
 | **Foundry 006** | Code Repositories in Foundry | [validated bundle](articles/006_code_repositories_python_pyspark/) |
 | **Foundry 007** | Quiver for Ad-Hoc Counterparty Queries | [validated bundle](articles/007_quiver_ad_hoc_counterparty_queries/) |
-| **Foundry 008** | Time Series in Foundry | [starter bundle](articles/008_time_series_counterparty_risk_trajectories/) |
+| **Foundry 008** | Time Series in Foundry | [validated bundle](articles/008_time_series_counterparty_risk_trajectories/) |
 | **Foundry 009** | Foundry Ontology Design for Beneficial-Ownership Networks | [validated bundle](articles/009_beneficial_ownership_networks/) |
 | **Foundry 010** | Foundry vs Snowflake + DBT vs Databricks for DD Analytics | [starter bundle](articles/010_platform_tradeoff_framework/) |
 | **Knowledge Graphs 001** | Beneficial-Ownership Lists to Cypher | [bundle](articles/knowledge_graphs_001_beneficial_ownership_cypher/) · [root csv](ownership_synthetic.csv) |

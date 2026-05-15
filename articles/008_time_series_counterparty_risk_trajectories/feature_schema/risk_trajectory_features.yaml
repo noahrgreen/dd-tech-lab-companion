@@ -1,5 +1,120 @@
+# Risk-Trajectory Feature Schema — Foundry Article 008 companion
+#
+# Component-signal definitions for counterparty_risk_trajectory.py.
+# Each feature has a canonical name, source data, mathematical
+# construction, audit-defensibility note, and the weight in the
+# illustrative composite scoring.
+
+frequency: daily   # daily-frequency TimeSeries per Counterparty
+lookback_days: 730
+
 features:
-  - monthly_txn_volume_change_pct
-  - sanctions_screening_hits_rolling_90d
-  - adverse_media_mentions_rolling_30d
-  - risk_rating_change_count_rolling_180d
+  - id: sanctions_signal
+    description: |
+      Sanctions exposure signal with exponential decay on hit age.
+      A counterparty with an active sanctions hit on the current date
+      registers at 1.0; the signal decays with 90-day half-life.
+    source_data:
+      ontology_object: SanctionsHit
+      fields: [counterparty_id, effective_date, status]
+    construction: |
+      For each (counterparty_id, date) in the daily grid:
+        decay_for_each_hit = exp(-ln(2) * days_since_hit / 90)
+        sanctions_signal = max(decay_for_each_hit across hits)
+    bounded_range: [0.0, 1.0]
+    weight_illustrative: 0.40
+    audit_defensibility: |
+      Sanctions exposure is the highest-weighted component because
+      sanctions-related rating decisions carry the most material
+      regulatory consequences. The exponential-decay form ensures that
+      old hits eventually wash out (a 1996 sanctions hit on a counterparty
+      now in good standing should not dominate today's composite).
+
+  - id: media_signal
+    description: |
+      Adverse-media density signal: 90-day rolling count of mentions,
+      log-scaled and saturated at 1.0.
+    source_data:
+      ontology_object: AdverseMediaMention
+      fields: [counterparty_id, mention_date]
+    construction: |
+      For each (counterparty_id, date):
+        mention_count = COUNT(AdverseMediaMention WHERE mention_date IN [date-89, date])
+        media_signal = min(log1p(mention_count) / 5.0, 1.0)
+    bounded_range: [0.0, 1.0]
+    weight_illustrative: 0.25
+    audit_defensibility: |
+      Log-scale prevents a single high-volume news event from dominating
+      the signal (e.g., a counterparty mentioned in 500 articles about a
+      single industry-wide event vs. one mentioned in 5 separate matters).
+      The 90-day window matches the seed for Article 004's adverse-media
+      review pattern.
+
+  - id: transaction_signal
+    description: |
+      Transaction-anomaly signal: |z-score| of daily transaction volume
+      against a 30-day rolling-window baseline.
+    source_data:
+      ontology_object: Transaction
+      fields: [counterparty_id, transaction_date, volume_usd]
+    construction: |
+      For each (counterparty_id, date):
+        daily_volume = SUM(Transaction.volume_usd WHERE transaction_date == date)
+        rolling_mean, rolling_std = ROLLING_STATS(daily_volume, window=30, exclude_current)
+        z_score = |daily_volume - rolling_mean| / rolling_std  (if rolling_std > 0 else 0)
+        transaction_signal = min(z_score / 5.0, 1.0)
+    bounded_range: [0.0, 1.0]
+    weight_illustrative: 0.20
+    audit_defensibility: |
+      Z-score-based anomaly detection is standard practice in transaction
+      monitoring. The 30-day window is the typical AML-supervised-learning
+      baseline; institutions with materially different transaction patterns
+      may calibrate the window separately.
+
+  - id: kyc_signal
+    description: |
+      KYC freshness signal: 0.0 immediately after refresh, 1.0 at 18
+      months stale (540 days), saturating at 1.0 beyond.
+    source_data:
+      ontology_object: Counterparty
+      fields: [counterparty_id, last_kyc_refresh_date]
+    construction: |
+      For each (counterparty_id, date):
+        days_since_kyc = days_between(last_kyc_refresh_date, date)
+        kyc_signal = min(max(days_since_kyc / 540, 0.0), 1.0)
+    bounded_range: [0.0, 1.0]
+    weight_illustrative: 0.15
+    audit_defensibility: |
+      KYC freshness is a process-quality signal more than a risk signal.
+      The 540-day saturation point corresponds to typical institutional
+      KYC-refresh cadence policies (annual to 18-month). Lowest weight
+      because freshness is an operational gap indicator, not a risk-level
+      indicator.
+
+# ── Composite scoring ─────────────────────────────────────────────────────
+composite_risk_score:
+  formula: |
+    composite_risk_score =
+        0.40 * sanctions_signal
+      + 0.25 * media_signal
+      + 0.20 * transaction_signal
+      + 0.15 * kyc_signal
+  bounded_range: [0.0, 1.0]
+  weights_validation_note: |
+    Weights are ILLUSTRATIVE ONLY. Production weights require
+    institution-specific calibration on labeled outcomes per
+    model_governance/sr_11_7_validation_framework.md.
+
+# ── Alternative composite functions (for sensitivity analysis) ──────────
+alternative_composites_for_validation:
+  - id: beneish_m_style
+    description: |
+      M-score-style composite: each component is a deviation from peer
+      median rather than an absolute level. Used for institutional
+      portfolios where absolute risk levels are less meaningful than
+      relative ranking. See Beneish 1999.
+  - id: dechow_f_style
+    description: |
+      F-score-style composite: discrete component flags (above-threshold
+      yes/no) summed to a discrete score rather than continuous weighted
+      sum. Trades resolution for interpretability. See Dechow et al. 2011.

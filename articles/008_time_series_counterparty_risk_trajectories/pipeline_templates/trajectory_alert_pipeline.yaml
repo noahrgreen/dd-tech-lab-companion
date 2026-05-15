@@ -1,6 +1,103 @@
+# Trajectory Alert Pipeline — Foundry Article 008 companion
+#
+# Foundry Pipeline Builder shape for the daily counterparty-risk
+# trajectory pipeline. Code-Repository transform produces the
+# counterparty_risk_score time series; Pipeline Builder applies the
+# threshold rules and emits AlertEntry objects that hand off to Article
+# 005's Actions framework.
+
+pipeline:
+  name: counterparty_risk_trajectory_alerting
+  schedule:
+    cron: "0 4 * * *"  # daily at 04:00 local time
+    timezone: America/New_York
+  owner: data_engineering
+  alert_routing: oncall_data_eng_distribution
+
 inputs:
-  - counterparty_monthly_features
+  - dataset: /dd/ontology/Counterparty
+    refresh_cadence: daily
+  - dataset: /dd/silver/sanctions_hits
+    refresh_cadence: hourly
+  - dataset: /dd/silver/adverse_media_mentions
+    refresh_cadence: hourly
+  - dataset: /dd/silver/transactions
+    refresh_cadence: hourly
+
 transforms:
-  - compute_zscores
-  - threshold_breach_flags
-  - emit_alert_objects
+  - id: produce_risk_trajectory
+    type: code_repository_transform
+    code_repo_path: /Code Repositories/dd_ingestion/transforms/counterparty_risk_trajectory.py
+    transform_name: compute_risk_trajectory
+    outputs:
+      - /dd/timeseries/counterparty_risk_score
+    audit_metadata_columns: [pipeline_run_id, transform_version, computed_at]
+
+  - id: detect_threshold_breaches
+    type: pipeline_builder_no_code
+    inputs: [/dd/timeseries/counterparty_risk_score]
+    operations:
+      - operator: lag_compute
+        field: composite_risk_score
+        lag: 1
+        partition_by: counterparty_id
+        order_by: date
+        as: prior_day_score
+      - operator: rolling_stats
+        field: composite_risk_score
+        window_days: 30
+        as: [rolling_mean_30d, rolling_std_30d]
+        partition_by: counterparty_id
+      - operator: filter
+        keep_where: |
+          (composite_risk_score >= 0.60 AND prior_day_score < 0.60)
+          OR (composite_risk_score >= 0.85 AND prior_day_score < 0.85)
+          OR ((composite_risk_score - rolling_mean_30d) / rolling_std_30d >= 3.0)
+        as_dataset: /dd/timeseries/risk_score_breaches
+    outputs:
+      - /dd/timeseries/risk_score_breaches
+
+  - id: emit_alert_entries
+    type: pipeline_builder_no_code
+    inputs: [/dd/timeseries/risk_score_breaches]
+    operations:
+      - operator: map_to_object
+        target_object_class: AlertEntry
+        field_mapping:
+          alert_id: uuid()
+          counterparty_id: counterparty_id
+          composite_risk_score: composite_risk_score
+          prior_day_score: prior_day_score
+          breach_type: classify_breach(composite_risk_score, prior_day_score, rolling_mean_30d, rolling_std_30d)
+          generated_at: current_timestamp()
+          triggers_action_type: route_action(breach_type)
+          status: open
+    outputs:
+      - /dd/ontology/AlertEntry
+
+# ── Downstream Actions handoff ───────────────────────────────────────────
+# AlertEntry objects flow into Workshop application's review queue
+# (Article 003 pattern). Analyst review-and-action triggers the
+# corresponding ActionType per Article 005:
+#   - breach_type=composite_crosses_high       → EscalateToEDD
+#   - breach_type=composite_crosses_critical  → ElevateRiskRating (critical)
+#   - breach_type=change_point_zscore         → EscalateToEDD
+#
+# Once the Action fires, the resulting AuditEntry references the
+# triggering AlertEntry via supporting_evidence_ids — closing the
+# trajectory → alert → Action → AuditEntry audit chain.
+
+action_handoff_rules_file: ../threshold_alerting/threshold_to_action_handoff.yaml
+
+# ── Monitoring & SLA ─────────────────────────────────────────────────────
+monitoring:
+  freshness_sla: |
+    risk_score time series for every Counterparty must be no more than
+    24 hours stale; pipeline runs at 04:00 daily and completes by 06:00.
+  alert_volume_sla: |
+    Daily alert volume tracked weekly; if > 20 per analyst per day
+    sustained, the model governance committee re-reviews thresholds.
+  precision_sla: |
+    Monthly precision (alerts resulting in EscalateToEDD or
+    ElevateRiskRating) tracked; if < 30% sustained over a quarter,
+    thresholds re-validated.

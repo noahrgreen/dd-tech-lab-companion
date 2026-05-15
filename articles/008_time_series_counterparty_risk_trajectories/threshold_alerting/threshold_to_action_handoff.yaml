@@ -1,0 +1,130 @@
+# Threshold → Action Handoff Rules — Foundry Article 008 companion
+#
+# Maps composite-risk-score threshold breaches to Article 005 Actions
+# framework invocations. The transform produces the time-series; this
+# mapping converts trajectory changes into the analyst workflow.
+#
+# ALL THRESHOLDS BELOW ARE ILLUSTRATIVE ONLY. See
+# model_governance/sr_11_7_validation_framework.md.
+
+alerting_rules:
+  # ── Rule 1: Composite score crosses upward threshold ──
+  - id: composite_crosses_high
+    trigger:
+      condition: |
+        composite_risk_score >= 0.60
+        AND lag(composite_risk_score, 1, partition=counterparty_id, order=date) < 0.60
+    action_handoff:
+      action_type: EscalateToEDD
+      authorization_required: senior_analyst
+      pre_populated_fields:
+        target_object: counterparty_id
+        justification_seed: "Composite risk-trajectory threshold breach. Score crossed 0.60 on {date} from prior-day {prior_score}."
+        supporting_evidence:
+          - composite_risk_score time series (last 90 days)
+          - top contributing component signal per scoring weights
+      analyst_workflow: "Review trajectory; investigate component-signal drivers; decide on Action submission."
+    rationale: |
+      Crossing 0.60 is the early-warning level — does not automatically
+      trigger EDD, but routes the counterparty to senior_analyst review.
+      Analyst applies judgment using the trajectory + component drivers.
+
+  # ── Rule 2: Composite score crosses critical threshold ──
+  - id: composite_crosses_critical
+    trigger:
+      condition: |
+        composite_risk_score >= 0.85
+        AND lag(composite_risk_score, 1, partition=counterparty_id, order=date) < 0.85
+    action_handoff:
+      action_type: ElevateRiskRating
+      authorization_required: senior_analyst
+      dual_approval_required: true   # critical elevation per Article 005
+      dual_approver_role: compliance_manager_or_above
+      pre_populated_fields:
+        target_object: counterparty_id
+        new_risk_rating: critical
+        justification_seed: "Composite risk-score crossed critical threshold 0.85 on {date}. Component-signal breakdown: sanctions={s_pct}%, media={m_pct}%, transaction={t_pct}%, kyc={k_pct}%."
+        supporting_evidence:
+          - composite_risk_score time series
+          - per-component signal series
+          - linked sanctions_hits / adverse_media_mentions / transactions / Counterparty objects
+      analyst_workflow: "Critical-rating elevation — investigate trajectory in depth; verify dual-approval; submit Action."
+    rationale: |
+      Crossing 0.85 is the critical-action level — the trajectory has
+      reached a state that warrants critical-rating consideration. The
+      Article 005 dual-approval discipline applies; this rule does NOT
+      auto-execute the rating change — it routes the counterparty for
+      the dual-approval review.
+
+  # ── Rule 3: Change-point detection (rapid deterioration) ──
+  - id: change_point_zscore
+    trigger:
+      condition: |
+        (composite_risk_score - rolling_mean_30d(composite_risk_score))
+        / rolling_std_30d(composite_risk_score) >= 3.0
+      method: CUSUM_or_zscore   # Page 1954 / Brockwell-Davis 2002
+    action_handoff:
+      action_type: EscalateToEDD
+      authorization_required: senior_analyst
+      pre_populated_fields:
+        target_object: counterparty_id
+        justification_seed: "Composite risk-score change-point detected on {date}: current score {score} is {zscore} standard deviations above 30-day baseline."
+        supporting_evidence:
+          - composite_risk_score time series (last 60 days)
+          - change-point detection chart
+          - underlying transaction or mention events in change-point window
+      analyst_workflow: "Rapid-deterioration signal — investigate the triggering event(s) in the change-point window."
+    rationale: |
+      Change-point detection catches abrupt deteriorations that may not yet
+      have crossed the absolute 0.60/0.85 thresholds but indicate a
+      regime shift worth investigating.
+
+  # ── Rule 4: Persistent above-threshold without action (queue-staleness alert) ──
+  - id: persistent_high_no_action
+    trigger:
+      condition: |
+        composite_risk_score >= 0.60 FOR 14 consecutive days
+        AND no EscalateToEDD or ElevateRiskRating Action recorded for this counterparty in the 14-day window
+    action_handoff:
+      action_type: notify
+      target: senior_analyst_team_distribution_list
+      message_template: |
+        Counterparty {counterparty_id} has held composite_risk_score >= 0.60
+        for 14 consecutive days without an analyst Action. Confirm the
+        previous handoff alert was not lost.
+      analyst_workflow: "Verify earlier handoff received and triaged; ensure not falling through workflow gaps."
+    rationale: |
+      Catch the failure mode where the initial composite_crosses_high alert
+      was missed or queued but not actioned. 14 days is the operational
+      tolerance threshold — institution may tune.
+
+# ── Alert-fatigue governance ─────────────────────────────────────────────
+# Threshold values above are illustrative. Production calibration requires
+# measuring the alert volume at proposed thresholds and confirming the
+# resulting analyst workload is operationally sustainable. Initial
+# production deployment should target alert volume that consumes < 20% of
+# analyst time on review-queue triage. Adjust thresholds upward if alert
+# volume exceeds the sustainable envelope.
+
+alert_fatigue_calibration_checklist:
+  - Run the proposed thresholds on 90-day historical data BEFORE deployment.
+  - Compute resulting alert volume per analyst per day.
+  - Compute observed precision: fraction of alerts that produced an Action.
+  - If precision < 30% — thresholds are too sensitive; raise them.
+  - If volume > 20 alerts per analyst per day — thresholds are too sensitive
+    OR analyst capacity needs scaling.
+  - If precision > 80% AND volume is low — thresholds may be too loose;
+    consider lowering to catch borderline cases the model is missing.
+
+# ── Audit-trail integration ──────────────────────────────────────────────
+# Every triggered alert generates an AlertEntry record (separate from
+# AuditEntry). AlertEntry is mutable until the analyst decides on an
+# Action; once an Action fires, the alert is linked to the resulting
+# AuditEntry and the alert lifecycle terminates.
+
+alert_entry_schema_reference: ./alert_entry_schema.json
+audit_link: |
+  Once an Action fires (EscalateToEDD or ElevateRiskRating per Article 005),
+  the resulting AuditEntry.supporting_evidence_ids must include the
+  AlertEntry that triggered the workflow. This closes the audit-chain from
+  trajectory → alert → Action → AuditEntry.
